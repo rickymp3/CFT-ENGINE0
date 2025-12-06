@@ -1,0 +1,11 @@
+{
+  "id": "pbr/rock_slate",
+  "description": "Layered rock slate with subtle variation.",
+  "albedo": "../images/pbr/rock_slate_albedo.png",
+  "normal": "../images/pbr/rock_slate_normal.png",
+  "metallic": "../images/pbr/rock_slate_metallic.png",
+  "roughness": "../images/pbr/rock_slate_roughness.png",
+  "ao": "../images/pbr/rock_slate_ao.png",
+  "tiling": 1,
+  "color_space": "linear"
+}

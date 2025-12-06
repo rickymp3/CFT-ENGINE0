@@ -89,6 +89,22 @@ assets:
       tiling: 1
       color_space: linear
 
+  - id: pbr/rock_slate
+    type: material
+    path: materials/rock_slate.json
+    tags: [pbr, rock]
+    metadata:
+      tiling: 1
+      color_space: linear
+
+  - id: pbr/sand_dune
+    type: material
+    path: materials/sand_dune.json
+    tags: [pbr, sand]
+    metadata:
+      tiling: 1
+      color_space: linear
+
   - id: sfx/ui/click
     type: sound
     path: sounds/ui/click.wav
@@ -145,6 +161,13 @@ assets:
     metadata:
       looping: true
 
+  - id: ambience/forest_birds
+    type: sound
+    path: sounds/ambience/forest_birds.wav
+    tags: [ambience]
+    metadata:
+      looping: true
+
   - id: skybox/clear_skies
     type: image
     path: images/skybox/clear_skies/clear_skies_px.png
@@ -157,6 +180,33 @@ assets:
         ny: images/skybox/clear_skies/clear_skies_ny.png
         pz: images/skybox/clear_skies/clear_skies_pz.png
         nz: images/skybox/clear_skies/clear_skies_nz.png
+
+  - id: skybox/sunset_glow
+    type: image
+    path: images/skybox/sunset_glow/sunset_glow_px.png
+    tags: [skybox, environment]
+    metadata:
+      faces:
+        px: images/skybox/sunset_glow/sunset_glow_px.png
+        nx: images/skybox/sunset_glow/sunset_glow_nx.png
+        py: images/skybox/sunset_glow/sunset_glow_py.png
+        ny: images/skybox/sunset_glow/sunset_glow_ny.png
+        pz: images/skybox/sunset_glow/sunset_glow_pz.png
+        nz: images/skybox/sunset_glow/sunset_glow_nz.png
+
+  - id: sfx/ui/ping
+    type: sound
+    path: sounds/ui/ping.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.6
+
+  - id: sfx/footstep_soft
+    type: sound
+    path: sounds/sfx/footstep_soft.wav
+    tags: [sfx]
+    metadata:
+      volume: 0.7
 
 schema:
   version: 1

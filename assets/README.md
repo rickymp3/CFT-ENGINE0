@@ -28,9 +28,9 @@ Place your game assets in these directories (AAA-ready scaffold):
 Current seeded placeholders (safe to replace):
 - UI themes at `images/ui/theme_default*.png` (sd/hd/uhd)
 - UI kit: `panel_dark`, `button_primary`, icons (play/pause/close/settings)
-- PBR packs: `metal_plate`, `wood_oak`, `concrete_brushed`, `fabric_canvas`, `emissive_grid`
-- Skybox: `images/skybox/clear_skies/*`
-- Audio: UI (click/hover/confirm/error/swoosh) and ambience (wind/rain/city)
+- PBR packs: `metal_plate`, `wood_oak`, `concrete_brushed`, `fabric_canvas`, `emissive_grid`, `rock_slate`, `sand_dune`
+- Skyboxes: `clear_skies`, `sunset_glow`
+- Audio: UI (click/hover/confirm/error/swoosh/ping) and ambience (wind/rain/city/forest), plus `sfx/footstep_soft`
 
 AssetManager highlights:
 - Manifest-driven resolution with quality tier selection

@@ -1,0 +1,11 @@
+{
+  "id": "pbr/sand_dune",
+  "description": "Wind-swept dunes with soft ridges.",
+  "albedo": "../images/pbr/sand_dune_albedo.png",
+  "normal": "../images/pbr/sand_dune_normal.png",
+  "metallic": "../images/pbr/sand_dune_metallic.png",
+  "roughness": "../images/pbr/sand_dune_roughness.png",
+  "ao": "../images/pbr/sand_dune_ao.png",
+  "tiling": 1,
+  "color_space": "linear"
+}
