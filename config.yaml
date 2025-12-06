@@ -1,0 +1,77 @@
+# CFT Engine Configuration
+# Modify these settings to customize the engine behavior
+
+# Engine Core Settings
+engine:
+  window_title: "CFT AAA Engine"
+  window_width: 1280
+  window_height: 720
+  fullscreen: false
+  vsync: true
+  show_fps: true
+
+# Language Settings
+localization:
+  default_language: "en"  # Options: en, es, fr
+  available_languages:
+    - en
+    - es
+    - fr
+
+# Graphics Settings
+graphics:
+  enable_pbr: true          # Physically Based Rendering
+  enable_hdr: true          # High Dynamic Range
+  enable_post_processing: true
+  shadow_quality: "high"    # Options: low, medium, high, ultra
+  texture_quality: "high"
+  antialiasing: "msaa_4x"   # Options: none, fxaa, msaa_2x, msaa_4x, msaa_8x
+
+# Physics Settings
+physics:
+  enabled: true
+  gravity: -9.81
+  simulation_rate: 60       # Physics updates per second
+  debug_mode: false         # Show collision shapes
+
+# Animation Settings
+animation:
+  enabled: true
+  blend_mode: "linear"      # Options: linear, cubic
+  default_fps: 30
+
+# Networking Settings
+networking:
+  enabled: false
+  server_address: "localhost"
+  server_port: 9099
+  client_timeout: 30
+
+# Debug Settings
+debug:
+  show_wireframe: false
+  show_bounds: false
+  show_physics_shapes: false
+  show_performance_stats: true
+  log_level: "INFO"         # Options: DEBUG, INFO, WARNING, ERROR
+
+# Asset Paths
+assets:
+  models_path: "assets/models"
+  textures_path: "assets/textures"
+  sounds_path: "assets/sounds"
+  fonts_path: "assets/fonts"
+  shaders_path: "assets/shaders"
+
+# Controls (Keyboard Mappings)
+controls:
+  quit: "escape"
+  toggle_debug: "f1"
+  toggle_fullscreen: "f11"
+  screenshot: "f12"
+  move_forward: "w"
+  move_backward: "s"
+  move_left: "a"
+  move_right: "d"
+  jump: "space"
+  crouch: "c"

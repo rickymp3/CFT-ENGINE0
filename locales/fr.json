@@ -1,0 +1,55 @@
+{
+  "ui": {
+    "menu": {
+      "file": "Fichier",
+      "edit": "Édition",
+      "view": "Affichage",
+      "help": "Aide"
+    },
+    "buttons": {
+      "ok": "OK",
+      "cancel": "Annuler",
+      "apply": "Appliquer",
+      "save": "Enregistrer",
+      "load": "Charger",
+      "delete": "Supprimer"
+    },
+    "labels": {
+      "name": "Nom",
+      "position": "Position",
+      "rotation": "Rotation",
+      "scale": "Échelle"
+    }
+  },
+  "editor": {
+    "title": "Éditeur CFT Engine",
+    "panels": {
+      "hierarchy": "Hiérarchie de Scène",
+      "inspector": "Inspecteur",
+      "assets": "Bibliothèque de Ressources",
+      "timeline": "Chronologie d'Animation"
+    },
+    "messages": {
+      "saved": "Scène enregistrée avec succès",
+      "loaded": "Scène chargée avec succès",
+      "error": "Une erreur s'est produite: {error}"
+    }
+  },
+  "game": {
+    "start": "Démarrer le Jeu",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "quit": "Quitter",
+    "score": "Score: {score}",
+    "lives": "Vies: {lives}",
+    "level": "Niveau {level}"
+  },
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "error": "Erreur",
+    "warning": "Avertissement",
+    "info": "Information",
+    "confirm": "Êtes-vous sûr?"
+  }
+}

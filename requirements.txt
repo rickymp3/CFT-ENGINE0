@@ -1,1 +1,16 @@
 pytest
+pygame
+Pillow
+pygame-gui
+moderngl
+PyOpenGL
+numpy
+panda3d
+pyyaml
+websockets
+scipy
+asyncio
+onnxruntime
+lupa
+dropbox
+boxsdk

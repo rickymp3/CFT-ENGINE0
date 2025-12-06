@@ -1,0 +1,114 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Python: Debug Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-v",
+        "${file}"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Python: Run Engine",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/engine.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Python: Demo Game",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/demo_game.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Python: Graphics Demo (AAA)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/graphics_demo.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "SDL_VIDEODRIVER": "dummy"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Python: All Tests",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-v",
+        "tests/"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Python: Panda3D Engine (English)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/cft_panda3d_engine.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "CFT_LANG": "en"
+      }
+    },
+    {
+      "name": "Python: Panda3D Engine (Spanish)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/cft_panda3d_engine.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "CFT_LANG": "es"
+      }
+    },
+    {
+      "name": "Python: Panda3D Engine (French)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/cft_panda3d_engine.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}",
+        "CFT_LANG": "fr"
+      }
+    }
+  ]
+}
