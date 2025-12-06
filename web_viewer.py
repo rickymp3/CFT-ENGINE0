@@ -232,169 +232,241 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
         return """<!DOCTYPE html>
 <html>
 <head>
-    <title>CFT-ENGINE0 Graphics System Viewer</title>
+    <title>CFT-ENGINE0 Control Deck</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            margin: 0;
-            padding: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --panel-strong: #0b1221;
+            --card: #141c2e;
+            --accent: #60f0c4;
+            --accent-2: #82a0ff;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --border: rgba(255,255,255,0.08);
+            --shadow: 0 12px 40px rgba(0,0,0,0.4);
+            --radius: 14px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Space Grotesk', sans-serif;
+            background: radial-gradient(circle at 20% 20%, rgba(96,240,196,0.08), transparent 28%),
+                        radial-gradient(circle at 80% 0%, rgba(130,160,255,0.12), transparent 30%),
+                        var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 32px;
+        }
+        .shell {
+            max-width: 1280px;
+            margin: 0 auto 48px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, rgba(96,240,196,0.12), rgba(130,160,255,0.08));
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-mark {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            color: #0b1221;
+            letter-spacing: -0.5px;
         }
         h1 {
-            text-align: center;
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            letter-spacing: -0.4px;
         }
         .subtitle {
-            text-align: center;
-            font-size: 1.2em;
-            opacity: 0.9;
-            margin-bottom: 40px;
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 14px;
         }
-        .stats {
+        .pill {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .cta-row {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
+            align-items: center;
+            gap: 10px;
         }
-        .stat-box {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
+        .button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #0b1221;
+            border: none;
             border-radius: 10px;
-            text-align: center;
-            backdrop-filter: blur(10px);
+            padding: 11px 18px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.2px;
+            box-shadow: 0 10px 30px rgba(96,240,196,0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-        .stat-number {
-            font-size: 3em;
-            font-weight: bold;
+        .button.secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            box-shadow: none;
         }
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-        .flex {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .systems-grid {
+        .button:hover { transform: translateY(-1px); }
+        .button:active { transform: translateY(0); }
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
             margin-top: 20px;
         }
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow);
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 30px 0 12px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+        }
+        .stat {
+            padding: 18px;
+            border-radius: var(--radius);
+            background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+            border: 1px solid var(--border);
+        }
+        .stat-label { color: var(--muted); font-size: 13px; }
+        .stat-value { font-size: 28px; font-weight: 800; margin-top: 6px; }
         .system-card {
-            background: rgba(255,255,255,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px;
+            border-radius: var(--radius);
+            background: var(--panel);
+            border: 1px solid var(--border);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        .system-card:hover { transform: translateY(-2px); border-color: rgba(96,240,196,0.4); }
+        .system-name { font-weight: 700; font-size: 16px; letter-spacing: -0.2px; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+        .badge.good { background: rgba(96,240,196,0.14); color: #b7ffe6; }
+        .badge.bad { background: rgba(239,68,68,0.14); color: #fecaca; }
+        .muted { color: var(--muted); font-size: 13px; }
+        .methods { font-size: 13px; line-height: 1.5; color: var(--muted); }
+        pre {
+            margin: 0;
+            background: #0b1221;
+            border: 1px solid var(--border);
+            padding: 12px;
             border-radius: 10px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: transform 0.2s;
+            color: #cbd5e1;
+            font-size: 13px;
+            overflow-x: auto;
         }
-        .system-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .system-name {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .system-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            margin-bottom: 10px;
-        }
-        .status-available {
-            background: #10b981;
-        }
-        .status-error {
-            background: #ef4444;
-        }
-        .system-details {
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-        .methods-list {
-            margin-top: 10px;
-            font-size: 0.85em;
-            opacity: 0.8;
-        }
-        .loading {
-            text-align: center;
-            font-size: 1.5em;
-            padding: 40px;
-        }
-        .refresh-btn {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid #fff;
-            color: #fff;
-            padding: 10px 30px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            display: block;
-            margin: 30px auto;
-        }
-        .refresh-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        .loading { text-align: center; padding: 30px; color: var(--muted); }
+        .asset-preview { margin-top: 8px; border-radius: 8px; overflow: hidden; }
+        .chip { display: inline-block; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--muted); font-size: 12px; margin: 2px; }
+        @media (max-width: 720px) { header { flex-direction: column; align-items: flex-start; } body { padding: 18px; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 CFT-ENGINE0</h1>
-        <div class="subtitle">Advanced 3D Game Engine - System Viewer</div>
-        
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-number" id="totalSystems">-</div>
-                <div class="stat-label">Total Systems</div>
+    <div class="shell">
+        <header>
+            <div class="brand">
+                <div class="brand-mark">CFT</div>
+                <div>
+                    <h1>CFT-ENGINE0 Control Deck</h1>
+                    <div class="subtitle">Surface-level health, APIs, and assets at a glance.</div>
+                </div>
             </div>
-            <div class="stat-box">
-                <div class="stat-number" id="availableSystems">-</div>
+            <div class="cta-row">
+                <span class="pill">Headless-friendly | Live refresh</span>
+                <button class="button" onclick="loadAll()">Refresh View</button>
+            </div>
+        </header>
+
+        <div class="grid">
+            <div class="stat">
+                <div class="stat-label">Systems Tracked</div>
+                <div class="stat-value" id="totalSystems">–</div>
+            </div>
+            <div class="stat">
                 <div class="stat-label">Available</div>
+                <div class="stat-value" id="availableSystems">–</div>
             </div>
-            <div class="stat-box">
-                <div class="stat-number" id="totalMethods">-</div>
-                <div class="stat-label">Total Methods</div>
-            </div>
-        </div>
-        
-        <button class="refresh-btn" onclick="loadAll()">🔄 Refresh</button>
-
-        <div class="flex">
-            <div class="system-card" style="flex:1; min-width:320px;">
-                <div class="system-name">Architecture</div>
-                <div id="archContainer" class="system-details">Loading...</div>
-            </div>
-            <div class="system-card" style="flex:1; min-width:320px;">
-                <div class="system-name">Testing</div>
-                <div id="testContainer" class="system-details">Loading...</div>
+            <div class="stat">
+                <div class="stat-label">Total Public Methods</div>
+                <div class="stat-value" id="totalMethods">–</div>
             </div>
         </div>
 
-        <h2>Systems</h2>
+        <div class="grid">
+            <div class="panel">
+                <div class="section-title">Architecture</div>
+                <div id="archContainer" class="muted">Loading...</div>
+            </div>
+            <div class="panel">
+                <div class="section-title">Test Status</div>
+                <div id="testContainer" class="muted">Loading...</div>
+            </div>
+        </div>
+
+        <div class="section-title">
+            <span>Systems</span>
+            <span class="pill">Core + AAA surfaces</span>
+        </div>
         <div id="systemsContainer" class="loading">Loading systems...</div>
 
-        <h2>Code Examples</h2>
-        <div id="examplesContainer" class="systems-grid">Loading examples...</div>
+        <div class="section-title">
+            <span>Code Examples</span>
+            <span class="pill">Copy-paste ready</span>
+        </div>
+        <div id="examplesContainer" class="grid">Loading examples...</div>
 
-        <h2>Assets</h2>
-        <div id="assetsContainer" class="systems-grid">Loading assets...</div>
+        <div class="section-title">
+            <span>Asset Manifest</span>
+            <span class="pill">Previews when available</span>
+        </div>
+        <div id="assetsContainer" class="grid">Loading assets...</div>
     </div>
     
     <script>
+        const statusBadge = (info) => {
+            const isAvailable = info.status === 'available';
+            const cls = isAvailable ? 'badge good' : 'badge bad';
+            const label = isAvailable ? 'Ready' : 'Error';
+            return `<span class="${cls}">${label}</span>`;
+        };
+
         async function loadSystems() {
             const container = document.getElementById('systemsContainer');
-            container.innerHTML = '<div class="loading">Loading systems...</div>';
+            container.innerHTML = '<div class="loading">Pulling module metadata…</div>';
 
             const response = await fetch('/api/systems');
             const systems = await response.json();
@@ -402,7 +474,7 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
             let available = 0;
             let totalMethods = 0;
 
-            let html = '<div class="systems-grid">';
+            let html = '<div class="grid">';
 
             for (const [name, info] of Object.entries(systems)) {
                 const isAvailable = info.status === 'available';
@@ -413,28 +485,30 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
 
                 html += `
                     <div class="system-card">
-                        <div class="system-name">${name}</div>
-                        <span class="system-status status-${info.status}">
-                            ${isAvailable ? '✅ Available' : '❌ Error'}
-                        </span>
-                        <div class="system-details">
-                            <strong>Module:</strong> ${info.module}<br>
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="system-name">${name}</div>
+                            ${statusBadge(info)}
+                        </div>
+                        <div class="muted">Module: ${info.module}</div>
                 `;
 
                 if (isAvailable) {
                     html += `
-                            <strong>Methods:</strong> ${info.methods}<br>
-                            <strong>Init params:</strong> ${info.init_params.join(', ')}
-                            <div class="methods-list">
-                                <strong>Doc:</strong> ${info.doc || 'n/a'}<br>
-                                <strong>Methods:</strong><br>
-                                ${info.method_list.slice(0, 7).join(', ')}...
+                            <div class="methods">
+                                <strong>${info.methods}</strong> public methods · init(${info.init_params.join(', ') || ' '})
+                                <div style="margin-top:6px;">${info.doc || 'No docstring available.'}</div>
+                                <div style="margin-top:8px;">
+                                    <span class="chip">${(info.method_list[0] || 'update')}</span>
+                                    <span class="chip">${(info.method_list[1] || 'enable')}</span>
+                                    <span class="chip">${(info.method_list[2] || 'disable')}</span>
+                                </div>
                             </div>
                     `;
                 } else {
                     html += `
-                            <strong>Error:</strong><br>
-                            <span style="font-size:0.8em">${info.error}</span>
+                            <div class="methods">
+                                <strong>Error:</strong> ${info.error}
+                            </div>
                     `;
                 }
 
@@ -451,16 +525,16 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
 
         async function loadExamples() {
             const container = document.getElementById('examplesContainer');
-            container.innerHTML = '<div class="loading">Loading examples...</div>';
+            container.innerHTML = '<div class="loading">Preparing snippets…</div>';
             const response = await fetch('/api/examples');
             const examples = await response.json();
 
             let html = '';
             for (const [name, code] of Object.entries(examples)) {
                 html += `
-                    <div class="system-card">
-                        <div class="system-name">${name}</div>
-                        <pre style="white-space:pre-wrap;background:rgba(0,0,0,0.3);padding:10px;border-radius:6px;">${code}</pre>
+                    <div class="panel">
+                        <div class="system-name" style="margin-bottom:8px;">${name}</div>
+                        <pre>${code}</pre>
                     </div>
                 `;
             }
@@ -472,12 +546,13 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
             const response = await fetch('/api/architecture');
             const data = await response.json();
             container.innerHTML = `
-                <strong>Layers:</strong><br>${data.layers.join('<br>')}<br><br>
-                <strong>Data Flow:</strong><br>${data.data_flow.join('<br>')}<br><br>
-                <strong>Performance:</strong><br>
-                Render: ${data.performance.render_pipeline}<br>
-                Sim: ${data.performance.simulation}<br>
-                Tooling: ${data.performance.tooling}
+                <div><strong>Layers</strong><br>${data.layers.join('<br>')}</div>
+                <div style="margin-top:10px;"><strong>Data Flow</strong><br>${data.data_flow.join('<br>')}</div>
+                <div style="margin-top:10px;"><strong>Performance</strong><br>
+                    Render: ${data.performance.render_pipeline}<br>
+                    Sim: ${data.performance.simulation}<br>
+                    Tooling: ${data.performance.tooling}
+                </div>
             `;
         }
 
@@ -486,9 +561,9 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
             const response = await fetch('/api/tests');
             const data = await response.json();
             container.innerHTML = `
-                <strong>Unit:</strong> ${data.unit_tests}<br>
-                <strong>Stress:</strong> ${data.stress_tests}<br>
-                <strong>Notes:</strong><br>${data.notes.join('<br>')}
+                <div><strong>Unit:</strong> ${data.unit_tests}</div>
+                <div style="margin-top:6px;"><strong>Stress:</strong> ${data.stress_tests}</div>
+                <div style="margin-top:10px;"><strong>Notes:</strong><br>${data.notes.join('<br>')}</div>
             `;
         }
 
@@ -502,16 +577,16 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
 
             let html = '';
             for (const asset of assets) {
-                const preview = asset.preview ? `<div style="margin-top:10px;">${asset.type === 'sound' ? `<audio controls src="${asset.preview}" style="width:100%"></audio>` : `<img src="${asset.preview}" alt="${asset.id}" style="max-width:100%;border-radius:6px;"/>`}</div>` : '';
+                const preview = asset.preview ? `<div class="asset-preview">${asset.type === 'sound' ? `<audio controls src="${asset.preview}" style="width:100%"></audio>` : `<img src="${asset.preview}" alt="${asset.id}" style="max-width:100%;display:block;">`}</div>` : '';
                 html += `
                     <div class="system-card">
-                        <div class="system-name">${asset.id}</div>
-                        <div class="system-details">
-                            <strong>Type:</strong> ${asset.type}<br>
-                            <strong>Tags:</strong> ${(asset.tags || []).join(', ')}<br>
-                            <strong>Path:</strong> ${asset.path}
-                            ${preview}
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div class="system-name">${asset.id}</div>
+                            <span class="pill">${asset.type}</span>
                         </div>
+                        <div class="muted">Path: ${asset.path}</div>
+                        <div>${(asset.tags || []).map(t => `<span class="chip">${t}</span>`).join(' ')}</div>
+                        ${preview}
                     </div>
                 `;
             }

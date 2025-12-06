@@ -66,6 +66,8 @@ class DeferredRenderer:
         self.hdr_enabled = False
         self.bloom_enabled = False
         self.ssao_enabled = False
+        self.tonemap_mode = "aces"
+        self.lut_path: Optional[str] = None
         
         logger.info(f"Deferred renderer initialized ({width}x{height})")
     
@@ -446,6 +448,14 @@ class DeferredRenderer:
         """
         self.bloom_enabled = True
         logger.info(f"Bloom enabled (threshold={threshold}, intensity={intensity})")
+    
+    def set_tonemap(self, mode: str = "aces") -> None:
+        """Set tone mapping mode hint."""
+        self.tonemap_mode = mode
+    
+    def set_color_grading_lut(self, lut_path: Optional[str]) -> None:
+        """Assign a LUT for color grading if post stack uses one."""
+        self.lut_path = lut_path
     
     def enable_ssao(self, radius: float = 0.5, bias: float = 0.025) -> None:
         """Enable screen-space ambient occlusion.

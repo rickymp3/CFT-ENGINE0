@@ -102,5 +102,12 @@ class WebDemo(ShowBase):
         return task.cont
 
 if __name__ == "__main__":
-    app = WebDemo()
-    app.run()
+    try:
+        app = WebDemo()
+        app.run()
+    except Exception as exc:
+        print("⚠️  Web demo could not start a graphics pipe.")
+        print(f"Reason: {exc}")
+        print("Tip: install a Panda3D display backend (e.g., p3headlessgl) or run with a GPU/display available.")
+        import sys
+        sys.exit(1)

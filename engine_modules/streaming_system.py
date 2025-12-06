@@ -119,6 +119,7 @@ class StreamingManager:
         self.player_position = Point3(0, 0, 0)
         self.view_distance = 100.0  # Max distance for loading
         self.unload_distance = 150.0  # Distance to unload zones
+        self.camera_mask = None  # Optional culling mask hook
         
         # Memory management
         self.max_loaded_zones = 9  # 3x3 grid around player
@@ -128,9 +129,16 @@ class StreamingManager:
         # Streaming control
         self.streaming_enabled = True
         self.max_concurrent_loads = 2
+        self.allow_sync_load = True  # fallback when no loop present
         
         # Root node for streamed content
         self.streaming_root = base.render.attach_new_node("streaming_root")
+
+    def set_budgets(self, max_loaded_zones: int = 9, memory_budget_mb: float = 512.0, view_distance: float = 100.0) -> None:
+        """Update streaming budgets and view distances."""
+        self.max_loaded_zones = max_loaded_zones
+        self.memory_budget_mb = memory_budget_mb
+        self.view_distance = view_distance
     
     def create_zone(self, zone_id: str, center: Point3, radius: float) -> StreamingZone:
         """Create new streaming zone"""
@@ -180,15 +188,19 @@ class StreamingManager:
             # Load each asset
             for asset_path in zone.asset_paths:
                 try:
+                    loader = getattr(self.base, "loader", None)
+                    if loader is None:
+                        continue
                     # If we have asset pipeline, use it
                     if self.asset_pipeline:
-                        # Simulate async load
                         await asyncio.sleep(0.01)  # Yield control
-                        model = self.base.loader.load_model(asset_path)
+                        model = loader.load_model(asset_path)
                     else:
-                        model = self.base.loader.load_model(asset_path)
+                        model = loader.load_model(asset_path)
                     
                     if model:
+                        if self.camera_mask is not None and hasattr(model, "set_camera_mask"):
+                            model.set_camera_mask(self.camera_mask)
                         model.reparent_to(zone.zone_node)
                         zone.loaded_assets[asset_path] = model
                 
@@ -260,9 +272,15 @@ class StreamingManager:
                     break
                 
                 # Start async load
-                task = asyncio.create_task(self._load_zone_async(zone))
-                zone.load_task = task
-                loading_count += 1
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    task = asyncio.create_task(self._load_zone_async(zone))
+                    zone.load_task = task
+                    loading_count += 1
+                elif self.allow_sync_load:
+                    # Synchronous fallback
+                    loop.run_until_complete(self._load_zone_async(zone))
+                    loading_count += 1
     
     def save_streaming_config(self, filename: str):
         """Save zone configuration to file"""
@@ -292,6 +310,18 @@ class StreamingManager:
             zone = self.create_zone(zone_data['id'], center, zone_data['radius'])
             for asset in zone_data['assets']:
                 zone.add_asset(asset)
+
+    def get_status(self) -> Dict:
+        """Expose streaming telemetry for dashboards."""
+        return {
+            "zones": len(self.zones),
+            "loaded": len(self.loaded_zones),
+            "loading": len(self.loading_zones),
+            "budget_zones": self.max_loaded_zones,
+            "memory_budget_mb": self.memory_budget_mb,
+            "view_distance": self.view_distance,
+            "streaming_enabled": self.streaming_enabled,
+        }
 
 
 # ==================== Texture Streaming ====================
@@ -386,6 +416,7 @@ class StreamingSystem:
         
         # LOD models
         self.lod_models: Dict[str, LODModelNode] = {}
+        self.enabled = True
     
     def create_zone(self, zone_id: str, center: Point3, radius: float) -> StreamingZone:
         """Create streaming zone"""
@@ -403,12 +434,15 @@ class StreamingSystem:
     
     def update(self, player_position: Point3, dt: float):
         """Update all streaming systems"""
-        # Update streaming manager
+        if not self.enabled:
+            return
         self.streaming_manager.update_player_position(player_position)
         self.streaming_manager.update(dt)
-        
-        # Check origin shifting
         self.origin_shifter.check_and_shift(player_position)
+
+    def set_enabled(self, enabled: bool) -> None:
+        """Toggle streaming without clearing state."""
+        self.enabled = enabled
 
 
 def create_streaming_system(base, asset_pipeline=None) -> StreamingSystem:

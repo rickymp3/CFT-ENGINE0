@@ -285,4 +285,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if "DISPLAY" not in os.environ:
+        os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
     main()

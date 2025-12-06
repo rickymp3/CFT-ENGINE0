@@ -400,7 +400,9 @@ class SaveSlot:
 class SaveSystem:
     """Complete save/load system"""
     
-    def __init__(self, save_directory: str = "saves"):
+    SCHEMA_VERSION = "1.1"
+    
+    def __init__(self, save_directory: str = "saves", game_version: str = "0.1.0"):
         self.save_dir = Path(save_directory)
         self.save_dir.mkdir(exist_ok=True)
         
@@ -408,6 +410,7 @@ class SaveSystem:
         self.autosave_interval = 300.0  # 5 minutes
         self.autosave_timer = 0.0
         self.autosave_enabled = True
+        self.game_version = game_version
         
         # Compression
         self.use_compression = True
@@ -420,6 +423,7 @@ class SaveSystem:
     def create_save(self, slot_id: int) -> SaveSlot:
         """Create new save slot"""
         self.current_slot = SaveSlot(slot_id)
+        self.current_slot.save_version = self.SCHEMA_VERSION
         return self.current_slot
     
     def save_game(self, slot: SaveSlot, filename: Optional[str] = None):
@@ -428,6 +432,8 @@ class SaveSystem:
             filename = str(self._get_save_path(slot.slot_id))
         
         data = slot.to_dict()
+        data['schema_version'] = self.SCHEMA_VERSION
+        data['game_version'] = self.game_version
         json_data = json.dumps(data, indent=2)
         
         if self.use_compression:
@@ -455,6 +461,9 @@ class SaveSystem:
                 with open(filename, 'r') as f:
                     data = json.load(f)
             
+            schema_version = data.get('schema_version', '1.0')
+            if schema_version != self.SCHEMA_VERSION:
+                print(f"Warning: save schema {schema_version} differs from engine {self.SCHEMA_VERSION}")
             slot = SaveSlot.from_dict(data)
             self.current_slot = slot
             print(f"Game loaded from slot {slot_id}")
@@ -482,7 +491,9 @@ class SaveSystem:
                     'timestamp': data['timestamp'],
                     'scene_name': data.get('scene_name', 'Unknown'),
                     'player_name': data.get('player_name', 'Player'),
-                    'playtime': data.get('playtime', 0.0)
+                    'playtime': data.get('playtime', 0.0),
+                    'schema_version': data.get('schema_version', '1.0'),
+                    'game_version': data.get('game_version', 'unknown')
                 })
             except Exception as e:
                 print(f"Failed to read save {save_file}: {e}")
@@ -517,7 +528,17 @@ class SaveSystem:
             self.autosave()
             self.autosave_timer = 0.0
 
+    def get_state(self) -> Dict[str, Any]:
+        """Expose save system state for dashboards."""
+        return {
+            "current_slot": self.current_slot.slot_id if self.current_slot else None,
+            "autosave_enabled": self.autosave_enabled,
+            "autosave_interval": self.autosave_interval,
+            "schema_version": self.SCHEMA_VERSION,
+            "game_version": self.game_version,
+        }
 
-def create_save_system(save_directory: str = "saves") -> SaveSystem:
+
+def create_save_system(save_directory: str = "saves", game_version: str = "0.1.0") -> SaveSystem:
     """Factory function"""
-    return SaveSystem(save_directory)
+    return SaveSystem(save_directory, game_version=game_version)

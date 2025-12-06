@@ -26,12 +26,16 @@ from panda3d.bullet import (
     BulletHingeConstraint,
     BulletSliderConstraint,
     BulletConeTwistConstraint,
-    BulletPoint2PointConstraint,
     BulletGenericConstraint,
     BulletSoftBodyNode,
     BulletSoftBodyConfig,
     ZUp
 )
+
+try:
+    from panda3d.bullet import BulletPoint2PointConstraint
+except ImportError:  # Some Panda3D builds omit this constraint
+    BulletPoint2PointConstraint = None
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +170,18 @@ class PhysicsManager:
             self.world.set_debug_node(None)
             self.debug_enabled = False
             logger.info("Physics debug visualization disabled")
+
+    def get_state(self) -> Dict[str, any]:
+        """Expose physics telemetry for dashboards."""
+        try:
+            bodies = len(self.world.get_rigid_bodies())
+        except Exception:
+            bodies = 0
+        return {
+            "bodies": bodies,
+            "gravity": self.world.get_gravity().z if hasattr(self.world, "get_gravity") else None,
+            "debug": self.debug_enabled,
+        }
     
     def raycast(self, from_pos: Vec3, to_pos: Vec3) -> Optional[any]:
         """Perform a ray cast in the physics world.
@@ -322,7 +338,7 @@ class PhysicsManager:
         return constraint
     
     def add_point_to_point_constraint(self, node_a: NodePath, node_b: NodePath,
-                                       pivot_a: Vec3, pivot_b: Vec3) -> BulletPoint2PointConstraint:
+                                       pivot_a: Vec3, pivot_b: Vec3) -> Optional[BulletPoint2PointConstraint]:
         """Create a point-to-point (ball socket) constraint.
         
         Args:
@@ -334,11 +350,11 @@ class PhysicsManager:
         Returns:
             Created constraint
         """
-        constraint = BulletPoint2PointConstraint(
-            node_a.node(), node_b.node(),
-            pivot_a, pivot_b
-        )
+        if BulletPoint2PointConstraint is None:
+            logger.warning("BulletPoint2PointConstraint unavailable; skipping constraint creation")
+            return None
         
+        constraint = BulletPoint2PointConstraint(node_a.node(), node_b.node(), pivot_a, pivot_b)
         self.world.attach(constraint)
         logger.info(f"Point-to-point constraint added between {node_a.name} and {node_b.name}")
         return constraint

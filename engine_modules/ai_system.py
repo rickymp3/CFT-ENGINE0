@@ -526,6 +526,18 @@ class AISystem:
         if agent in self.agents:
             self.agents.remove(agent)
     
+    def get_state(self) -> Dict[str, any]:
+        """Expose basic AI system telemetry."""
+        return {
+            "agents": len(self.agents),
+            "navmesh": {
+                "exists": self.navmesh is not None,
+                "grid_size": getattr(self.navmesh, "grid_size", None),
+                "cell_size": getattr(self.navmesh, "cell_size", None),
+                "nodes": len(self.navmesh.nodes) if self.navmesh else 0,
+            }
+        }
+    
     def load_ml_model(self, name: str, model_path: str, backend: str = "onnx"):
         """Load ML model for inference (ONNX or TensorFlow Lite)"""
         try:

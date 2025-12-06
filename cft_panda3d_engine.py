@@ -274,5 +274,12 @@ class CFTGame(ShowBase):
 if __name__ == "__main__":
     # Detect language from environment and launch the game.
     lang = os.environ.get("CFT_LANG", "en")
-    game = CFTGame(language=lang)
-    game.run()
+    try:
+        game = CFTGame(language=lang)
+        game.run()
+    except Exception as exc:
+        print("⚠️  CFT Panda3D engine could not start a graphics pipe.")
+        print(f"Reason: {exc}")
+        print("Tip: install a Panda3D display backend (e.g., p3headlessgl) or run with a GPU/display/xvfb.")
+        import sys
+        sys.exit(1)

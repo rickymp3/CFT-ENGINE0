@@ -1,4 +1,5 @@
 """Example game demo using the CFT game engine."""
+import os
 import pygame
 from game_engine import GameEngine, Sprite
 
@@ -111,4 +112,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if "DISPLAY" not in os.environ:
+        os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
     main()
