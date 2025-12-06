@@ -1,0 +1,12 @@
+{
+  "id": "pbr/organic/fabric_cotton",
+  "description": "High-quality 4K woven cotton fabric with realistic weave pattern and texture. CC0 from AmbientCG.",
+  "albedo": "../images/pbr/organic/fabric_organic_albedo.jpg",
+  "normal": "../images/pbr/organic/fabric_organic_normal.jpg",
+  "roughness": "../images/pbr/organic/fabric_organic_roughness.jpg",
+  "height": "../images/pbr/organic/fabric_organic_height.jpg",
+  "tiling": 2,
+  "color_space": "linear",
+  "license": "CC0",
+  "source": "https://ambientcg.com/view?id=Fabric001"
+}

@@ -105,6 +105,37 @@ assets:
       tiling: 1
       color_space: linear
 
+  - id: pbr/organic/bark
+    type: material
+    path: materials/organic_bark.json
+    tags: [pbr, organic, bark, tree]
+    metadata:
+      tiling: 1
+      color_space: linear
+      resolution: 4K
+      license: CC0
+
+  - id: pbr/organic/fabric_cotton
+    type: material
+    path: materials/organic_fabric_cotton.json
+    tags: [pbr, organic, fabric, cotton, cloth]
+    metadata:
+      tiling: 2
+      color_space: linear
+      resolution: 4K
+      license: CC0
+
+  - id: pbr/organic/leaf
+    type: material
+    path: materials/organic_leaf.json
+    tags: [pbr, organic, plant, leaf, flora]
+    metadata:
+      tiling: 1
+      color_space: linear
+      resolution: 4K
+      translucency: true
+      license: CC0
+
   - id: sfx/ui/click
     type: sound
     path: sounds/ui/click.wav

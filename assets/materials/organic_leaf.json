@@ -1,0 +1,14 @@
+{
+  "id": "pbr/organic/leaf",
+  "description": "High-quality 4K plant leaf texture with realistic veins and surface variation. Includes opacity for alpha blending. CC0 from AmbientCG.",
+  "albedo": "../images/pbr/organic/leaf_organic_albedo.jpg",
+  "normal": "../images/pbr/organic/leaf_organic_normal.jpg",
+  "roughness": "../images/pbr/organic/leaf_organic_roughness.jpg",
+  "height": "../images/pbr/organic/leaf_organic_height.jpg",
+  "ao": "../images/pbr/organic/leaf_organic_ao.jpg",
+  "tiling": 1,
+  "color_space": "linear",
+  "translucency": 0.6,
+  "license": "CC0",
+  "source": "https://ambientcg.com/view?id=Leaf001"
+}
