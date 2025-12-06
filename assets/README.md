@@ -1,31 +1,37 @@
 # Asset directories for CFT-ENGINE0
 
-Place your game assets in these directories:
+Place your game assets in these directories (AAA-ready scaffold):
 
 ## /images
-- Sprite sheets
-- Background images
-- UI elements
-- Textures
+- UI skins, sprite sheets, backgrounds, PBR texture maps
+- Subfolders: `ui/`, `pbr/`, `fx/`
+- Formats: PNG (preferred), JPG, HDR for skyboxes
 
-Supported formats: PNG, JPG, BMP, GIF
+## /materials
+- JSON descriptors for PBR packs (albedo/normal/metallic/roughness/ao)
+- Reference texture paths relative to this folder
 
 ## /sounds
-- Sound effects
-- UI sounds
-- Ambient audio
-
-Supported formats: WAV, OGG, MP3
+- `ui/` for clicks/menus, `ambience/` for loops, `sfx/` for spot FX
+- Formats: WAV (lossless), OGG (compressed)
 
 ## /fonts
-- TrueType fonts (.ttf)
-- OpenType fonts (.otf)
+- TTF/OTF primary and fallback families for UI and in-world text
 
-## /music (create if needed)
-- Background music tracks
+## /music
+- Background music tracks (loop-ready)
 
-The AssetManager automatically handles:
-- Asset caching for performance
-- Placeholder generation for missing files
-- Image scaling and transparency
-- Sound volume control
+## Manifest
+- `assets/manifest.yaml` registers canonical asset IDs, tags, and quality tiers (sd/hd/uhd)
+- Variants may point to higher-res versions per ID
+
+Current seeded placeholders (safe to replace):
+- UI themes at `images/ui/theme_default*.png` (sd/hd/uhd)
+- PBR metal plate pack in `images/pbr/` + `materials/metal_plate.json`
+- UI click + ambience wind WAVs in `sounds/ui/` and `sounds/ambience/`
+
+AssetManager highlights:
+- Manifest-driven resolution with quality tier selection
+- Dot-path loads for images/sounds/fonts/materials
+- Procedural texture generator for rapid prototyping
+- Graceful fallbacks for missing assets (placeholder visuals/silence)

@@ -1,37 +1,76 @@
 """Asset management system for loading and managing game resources."""
-import pygame
-from pathlib import Path
-from typing import Dict, Optional
-from PIL import Image
+import json
 import os
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import pygame
+import yaml
+from PIL import Image
 
 
 class AssetManager:
-    """Manages loading and caching of game assets."""
-    
-    def __init__(self, base_path: str = "assets"):
+    """Manages loading and caching of game assets with manifest support."""
+
+    def __init__(self, base_path: str = "assets", manifest: str = "manifest.yaml", quality: str = "hd"):
         """Initialize the asset manager.
-        
+
         Args:
             base_path: Root directory for assets
+            manifest: Relative manifest path inside base_path
+            quality: Desired quality tier (sd, hd, uhd)
         """
         self.base_path = Path(base_path)
+        self.manifest_path = self.base_path / manifest
+        self.quality = quality
+
         self.images: Dict[str, pygame.Surface] = {}
         self.sounds: Dict[str, pygame.mixer.Sound] = {}
         self.fonts: Dict[str, pygame.font.Font] = {}
         self.music: Optional[str] = None
-        
+        self.manifest: Dict[str, Any] = {"assets": [], "schema": {}}
+
         # Ensure asset directories exist
         self._ensure_directories()
+        self._load_manifest()
         
     def _ensure_directories(self) -> None:
         """Create asset directories if they don't exist."""
-        for subdir in ['images', 'sounds', 'fonts', 'music']:
+        for subdir in ["images", "sounds", "fonts", "music", "materials"]:
             path = self.base_path / subdir
             path.mkdir(parents=True, exist_ok=True)
+
+    def _load_manifest(self) -> None:
+        """Load the asset manifest if present."""
+        if self.manifest_path.exists():
+            with open(self.manifest_path, "r", encoding="utf-8") as fh:
+                self.manifest = yaml.safe_load(fh) or {"assets": [], "schema": {}}
+        else:
+            self.manifest = {"assets": [], "schema": {}}
+
+    def list_assets(self, tag: Optional[str] = None, type_filter: Optional[str] = None) -> List[Dict[str, Any]]:
+        """List assets matching an optional tag or type."""
+        assets = self.manifest.get("assets", [])
+        if tag:
+            assets = [a for a in assets if tag in a.get("tags", [])]
+        if type_filter:
+            assets = [a for a in assets if a.get("type") == type_filter]
+        return assets
+
+    def _resolve_asset(self, asset_id: str) -> Optional[Dict[str, Any]]:
+        for asset in self.manifest.get("assets", []):
+            if asset.get("id") == asset_id:
+                return asset
+        return None
+
+    def _resolve_variant_path(self, asset: Dict[str, Any]) -> Path:
+        variants = asset.get("variants", [])
+        for variant in variants:
+            if variant.get("id") == self.quality:
+                return self.base_path / variant.get("path", asset.get("path", ""))
+        return self.base_path / asset.get("path", "")
     
-    def load_image(self, filename: str, scale: Optional[tuple] = None, 
-                   alpha: bool = True) -> pygame.Surface:
+    def load_image(self, filename: str, scale: Optional[tuple] = None, alpha: bool = True) -> pygame.Surface:
         """Load an image file.
         
         Args:
@@ -47,7 +86,17 @@ class AssetManager:
         if key in self.images:
             return self.images[key]
             
-        path = self.base_path / "images" / filename
+        # If a relative path is provided (e.g., images/pbr/metal.png), honor it; otherwise assume under images
+        candidate = Path(filename)
+        if len(candidate.parts) > 1:
+            path = self.base_path / candidate
+        else:
+            path = self.base_path / "images" / filename
+
+        # Allow manifest IDs (e.g., pbr/metal_plate) by resolving path
+        manifest_asset = self._resolve_asset(filename)
+        if manifest_asset and manifest_asset.get("type") == "image":
+            path = self._resolve_variant_path(manifest_asset)
         
         if not path.exists():
             # Create placeholder image if file doesn't exist
@@ -92,16 +141,20 @@ class AssetManager:
         """
         if filename in self.sounds:
             return self.sounds[filename]
-            
+
         path = self.base_path / "sounds" / filename
-        
+
+        manifest_asset = self._resolve_asset(filename)
+        if manifest_asset and manifest_asset.get("type") == "sound":
+            path = self._resolve_variant_path(manifest_asset)
+
         if not path.exists():
             print(f"Warning: Sound not found: {path}")
             # Return a silent sound placeholder
             sound = pygame.mixer.Sound(buffer=bytes(100))
         else:
             sound = pygame.mixer.Sound(str(path))
-            
+
         sound.set_volume(volume)
         self.sounds[filename] = sound
         return sound
@@ -125,6 +178,11 @@ class AssetManager:
             font = pygame.font.Font(None, size)
         else:
             path = self.base_path / "fonts" / filename
+
+            manifest_asset = self._resolve_asset(filename)
+            if manifest_asset and manifest_asset.get("type") == "font":
+                path = self._resolve_variant_path(manifest_asset)
+
             if path.exists():
                 font = pygame.font.Font(str(path), size)
             else:
@@ -156,8 +214,7 @@ class AssetManager:
         """Stop background music."""
         pygame.mixer.music.stop()
         
-    def generate_procedural_texture(self, width: int, height: int, 
-                                    pattern: str = "checkerboard") -> pygame.Surface:
+    def generate_procedural_texture(self, width: int, height: int, pattern: str = "checkerboard") -> pygame.Surface:
         """Generate a procedural texture for AAA-quality graphics.
         
         Args:
@@ -192,8 +249,7 @@ class AssetManager:
         
         return surface
     
-    def create_sprite_sheet(self, image_path: str, sprite_width: int, 
-                           sprite_height: int) -> list:
+    def create_sprite_sheet(self, image_path: str, sprite_width: int, sprite_height: int) -> list:
         """Load and split a sprite sheet into individual sprites.
         
         Args:
@@ -223,6 +279,34 @@ class AssetManager:
         self.sounds.clear()
         self.fonts.clear()
         self.music = None
+
+    def load_material(self, material_id: str) -> Dict[str, Any]:
+        """Load a PBR material pack defined in the manifest/material JSON."""
+        asset = self._resolve_asset(material_id)
+        if not asset:
+            raise FileNotFoundError(f"Material '{material_id}' not found in manifest")
+
+        material_path = self.base_path / asset.get("path", "")
+        if not material_path.exists():
+            raise FileNotFoundError(f"Material file missing: {material_path}")
+
+        with open(material_path, "r", encoding="utf-8") as fh:
+            material = json.load(fh)
+
+        # Resolve relative texture paths
+        resolved = {}
+        for key, value in material.items():
+            if key in {"albedo", "normal", "metallic", "roughness", "ao"}:
+                texture_path = (material_path.parent / value).resolve()
+                resolved[key] = self.load_image(str(texture_path.relative_to(self.base_path)))
+            else:
+                resolved[key] = value
+
+        return resolved
+
+    def set_quality(self, quality: str) -> None:
+        """Set desired quality tier (sd, hd, uhd)."""
+        self.quality = quality
 
 
 # Global asset manager instance

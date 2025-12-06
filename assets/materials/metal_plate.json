@@ -1,0 +1,11 @@
+{
+  "id": "pbr/metal_plate",
+  "description": "Brushed metal plate with subtle anisotropy.",
+  "albedo": "../images/pbr/metal_plate_albedo.png",
+  "normal": "../images/pbr/metal_plate_normal.png",
+  "metallic": "../images/pbr/metal_plate_metallic.png",
+  "roughness": "../images/pbr/metal_plate_roughness.png",
+  "ao": "../images/pbr/metal_plate_ao.png",
+  "tiling": 2,
+  "color_space": "linear"
+}

@@ -1,0 +1,51 @@
+# AAA-grade asset manifest for CFT-ENGINE0
+# Provides canonical IDs, types, variants, and quality tiers.
+assets:
+  - id: ui/theme/default
+    type: image
+    path: images/ui/theme_default.png
+    tags: [ui, theme, sd]
+    variants:
+      - id: hd
+        path: images/ui/theme_default_hd.png
+      - id: uhd
+        path: images/ui/theme_default_uhd.png
+    metadata:
+      color_space: sRGB
+      usage: ui
+      license: internal
+
+  - id: pbr/metal_plate
+    type: material
+    path: materials/metal_plate.json
+    tags: [pbr, metal, tiling]
+    metadata:
+      tiling: 2
+      color_space: linear
+
+  - id: fonts/primary
+    type: font
+    path: fonts/Inter-Regular.ttf
+    tags: [font, ui]
+    metadata:
+      fallbacks:
+        - fonts/DejaVuSans.ttf
+
+  - id: sfx/ui/click
+    type: sound
+    path: sounds/ui/click.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.6
+
+  - id: ambience/wind_light
+    type: sound
+    path: sounds/ambience/wind_light.wav
+    tags: [ambience]
+    metadata:
+      looping: true
+
+schema:
+  version: 1
+  quality_tiers: [sd, hd, uhd]
+  color_spaces: [sRGB, linear]
