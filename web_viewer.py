@@ -18,7 +18,10 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 import inspect
 import json
 import os
+from pathlib import Path
 from textwrap import dedent
+
+import yaml
 
 class EngineViewerHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -32,6 +35,8 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
             self._send_json(self.get_architecture())
         elif self.path == '/api/tests':
             self._send_json(self.get_test_status())
+        elif self.path == '/api/assets':
+            self._send_json(self.get_assets())
         else:
             super().do_GET()
 
@@ -170,6 +175,57 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
                 'With GPU/display: run full suite including stress tests',
             ]
         }
+
+    def get_assets(self):
+        """Return manifest-driven asset list with preview paths."""
+        base_dir = Path(__file__).parent
+        manifest_path = base_dir / 'assets' / 'manifest.yaml'
+
+        if not manifest_path.exists():
+            return {'assets': [], 'error': 'manifest not found'}
+
+        with open(manifest_path, 'r', encoding='utf-8') as fh:
+            manifest = yaml.safe_load(fh) or {}
+
+        assets = []
+        for entry in manifest.get('assets', []):
+            asset = {
+                'id': entry.get('id'),
+                'type': entry.get('type'),
+                'tags': entry.get('tags', []),
+                'path': entry.get('path'),
+                'preview': None,
+            }
+
+            path = base_dir / entry.get('path', '')
+
+            if entry.get('type') == 'material':
+                try:
+                    with open(path, 'r', encoding='utf-8') as mf:
+                        mat = json.load(mf)
+                    albedo_rel = mat.get('albedo')
+                    if albedo_rel:
+                        albedo_path = (path.parent / albedo_rel).resolve()
+                        asset['preview'] = '/' + albedo_path.relative_to(base_dir).as_posix()
+                except Exception:
+                    asset['preview'] = None
+            elif entry.get('type') == 'image':
+                asset['preview'] = '/' + path.relative_to(base_dir).as_posix()
+            elif entry.get('type') == 'sound':
+                asset['preview'] = '/' + path.relative_to(base_dir).as_posix()
+            elif entry.get('type') == 'font':
+                asset['preview'] = None
+
+            # Skybox: pick the +X face if provided
+            if entry.get('id', '').startswith('skybox/'):
+                faces = entry.get('metadata', {}).get('faces', {})
+                px = faces.get('px')
+                if px:
+                    asset['preview'] = '/' + (base_dir / px).relative_to(base_dir).as_posix()
+
+            assets.append(asset)
+
+        return {'assets': assets, 'count': len(assets)}
     
     def get_dashboard(self):
         """HTML dashboard"""
@@ -330,6 +386,9 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
 
         <h2>Code Examples</h2>
         <div id="examplesContainer" class="systems-grid">Loading examples...</div>
+
+        <h2>Assets</h2>
+        <div id="assetsContainer" class="systems-grid">Loading assets...</div>
     </div>
     
     <script>
@@ -433,8 +492,35 @@ class EngineViewerHandler(SimpleHTTPRequestHandler):
             `;
         }
 
+        async function loadAssets() {
+            const container = document.getElementById('assetsContainer');
+            container.innerHTML = '<div class="loading">Loading assets...</div>';
+
+            const response = await fetch('/api/assets');
+            const data = await response.json();
+            const assets = data.assets || [];
+
+            let html = '';
+            for (const asset of assets) {
+                const preview = asset.preview ? `<div style="margin-top:10px;">${asset.type === 'sound' ? `<audio controls src="${asset.preview}" style="width:100%"></audio>` : `<img src="${asset.preview}" alt="${asset.id}" style="max-width:100%;border-radius:6px;"/>`}</div>` : '';
+                html += `
+                    <div class="system-card">
+                        <div class="system-name">${asset.id}</div>
+                        <div class="system-details">
+                            <strong>Type:</strong> ${asset.type}<br>
+                            <strong>Tags:</strong> ${(asset.tags || []).join(', ')}<br>
+                            <strong>Path:</strong> ${asset.path}
+                            ${preview}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html || '<div class="loading">No assets found</div>';
+        }
+
         async function loadAll() {
-            await Promise.all([loadSystems(), loadExamples(), loadArchitecture(), loadTests()]);
+            await Promise.all([loadSystems(), loadExamples(), loadArchitecture(), loadTests(), loadAssets()]);
         }
 
         loadAll();
