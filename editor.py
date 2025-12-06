@@ -27,6 +27,9 @@ from engine_modules.physics import PhysicsManager
 from engine_modules.rendering import RenderingManager
 from engine_modules.config import get_config
 from engine_modules.animation_timeline import AnimationTimeline
+from engine_modules.random_scene import RandomSceneGenerator
+from engine_modules.asset_generation import AssetGenerator, AssetGenerationConfig
+import threading
 
 
 class SceneHierarchyPanel:
@@ -455,6 +458,7 @@ class EditorToolbar:
             ("⚫ Sphere", "sphere"),
             ("💡 Light", "light"),
             ("📷 Camera", "camera"),
+            ("🎲 Random", "random"),
             ("▶️ Play", "play"),
             ("⏸️ Pause", "pause"),
             ("🔧 Tools", "tools")
@@ -801,8 +805,16 @@ class SceneEditor(ShowBase):
         self.camera_distance = max(2, min(50, self.camera_distance - direction))
         self.update_camera()
     
-    def add_primitive(self, primitive_type):
-        """Add a primitive object to the scene."""
+    def add_primitive(self, primitive_type, auto_name=True):
+        """Add a primitive object to the scene.
+        
+        Args:
+            primitive_type: Type of primitive ('cube', 'sphere', 'light', 'camera')
+            auto_name: If True, auto-generates name. If False, caller manages naming.
+        
+        Returns:
+            NodePath of created object, or None if failed
+        """
         if primitive_type == 'cube':
             model = self.loader.loadModel('models/box')
             name = f"Cube_{len(self.scene_objects)}"
@@ -824,23 +836,27 @@ class SceneEditor(ShowBase):
             model.setScale(0.3, 0.3, 0.3)
             name = f"Camera_{len(self.scene_objects)}"
         else:
-            return
+            return None
         
         # Position object
         model.reparentTo(self.render)
         model.setPos(0, 0, 1)
         model.setScale(0.5)
         
-        # Add to hierarchy
-        obj_entry = self.hierarchy.add_object(name, model)
-        self.scene_objects.append(obj_entry)
+        # Add to hierarchy only if auto_name is True
+        if auto_name:
+            obj_entry = self.hierarchy.add_object(name, model)
+            self.scene_objects.append(obj_entry)
+            print(f"✓ Added {name} to scene")
         
-        print(f"✓ Added {name} to scene")
+        return model
     
     def toolbar_action(self, action):
         """Handle toolbar actions."""
         if action in ['cube', 'sphere', 'light', 'camera']:
             self.add_primitive(action)
+        elif action == 'random':
+            self.generate_random_scene()
         elif action == 'play':
             self.toggle_play_mode()
         elif action == 'pause':
@@ -907,14 +923,115 @@ class SceneEditor(ShowBase):
     def toggle_animation(self):
         """Toggle animation playback."""
         self.timeline.toggle_playback()
-        if self.selected_object:
-            name = self.selected_object['name']
-            self.selected_object['object'].removeNode()
-            self.hierarchy.remove_object(self.selected_object)
-            self.scene_objects.remove(self.selected_object)
-            self.selected_object = None
-            self.inspector.set_object(None)
-            print(f"🗑️ Deleted: {name}")
+    
+    def generate_random_scene(self):
+        """Generate a random photorealistic scene using AI pipeline."""
+        print("\n" + "="*60)
+        print("🎲 RANDOM SCENE GENERATOR")
+        print("="*60)
+        print("Starting AI-driven scene generation...")
+        print("This may take 1-3 minutes depending on asset complexity.")
+        print("Progress will be displayed below.\n")
+        
+        # Create generator instance
+        # Note: AssetManager not available in editor, pass None for now
+        generator = RandomSceneGenerator(asset_manager=None)
+        
+        # Setup progress callback
+        def progress_callback(stage, progress, message):
+            """Display progress updates to user."""
+            bar_width = 40
+            filled = int(bar_width * progress)
+            bar = '█' * filled + '░' * (bar_width - filled)
+            percentage = int(progress * 100)
+            print(f"\r[{bar}] {percentage}% - {stage}: {message}", end='', flush=True)
+            if progress >= 1.0:
+                print()  # New line when complete
+        
+        # Setup completion callback
+        def completion_callback(result):
+            """Handle scene generation completion."""
+            if result is None:
+                print("\n❌ Scene generation failed or was cancelled.")
+                return
+            
+            print("\n✓ Scene generation complete!")
+            print("\n" + "-"*60)
+            print(f"Prompt: {result['prompt']}")
+            print(f"Story Beats: {len(result.get('story', {}).get('beats', []))}")
+            print(f"Assets Generated: {len(result.get('assets', []))}")
+            
+            # Display asset quality scores
+            if result.get('assets'):
+                print("\nAsset Quality:")
+                for i, asset in enumerate(result['assets'], 1):
+                    score = asset.get('realism_score', 0.0)
+                    attempts = asset.get('generation_attempts', 1)
+                    status = "✓" if score >= 0.9 else "⚠"
+                    print(f"  {status} Asset {i}: {score:.2f} (attempts: {attempts})")
+            
+            # Instantiate scene in editor
+            print("\nInstantiating scene in viewport...")
+            self._instantiate_generated_scene(result)
+            print("="*60 + "\n")
+        
+        # Start async generation
+        generator.set_progress_callback(progress_callback)
+        generator.generate_random_scene_async(completion_callback)
+    
+    def _instantiate_generated_scene(self, scene_result):
+        """Instantiate generated scene in the editor viewport.
+        
+        Args:
+            scene_result: Dict with 'prompt', 'story', 'assets', 'scene_data'
+        """
+        scene_data = scene_result.get('scene_data', {})
+        assets = scene_result.get('assets', [])
+        
+        # Clear existing scene (optional - comment out to keep current objects)
+        # for obj in self.scene_objects[:]:
+        #     obj['object'].removeNode()
+        # self.scene_objects.clear()
+        # self.hierarchy.clear()
+        
+        # Instantiate objects from scene_data
+        for obj_data in scene_data.get('objects', []):
+            obj_type = obj_data.get('type', 'cube')
+            position = obj_data.get('position', [0, 0, 0])
+            rotation = obj_data.get('rotation', [0, 0, 0])
+            scale = obj_data.get('scale', [1, 1, 1])
+            
+            # For now, use primitives as placeholders
+            # In production, would load actual generated GLB models
+            if obj_type in ['cube', 'sphere']:
+                node = self.add_primitive(obj_type, auto_name=False)
+                if node:
+                    node.setPos(*position)
+                    node.setHpr(*rotation)
+                    node.setScale(*scale)
+                    print(f"  ✓ Added {obj_type} at {position}")
+            else:
+                # For custom assets, would use:
+                # node = self.loader.loadModel(asset.model_path)
+                # Apply PBR textures from asset.texture_paths
+                print(f"  ⚠ Custom asset '{obj_type}' - using placeholder")
+        
+        # Apply lighting from scene_data
+        lighting = scene_data.get('lighting', {})
+        ambient_color = lighting.get('ambient_color', [0.3, 0.3, 0.35, 1.0])
+        directional_color = lighting.get('directional_color', [1.0, 0.95, 0.9, 1.0])
+        directional_direction = lighting.get('directional_direction', [-1, -1, -2])
+        
+        # Update ambient light
+        if hasattr(self, 'ambient_light'):
+            self.ambient_light.node().setColor(Vec4(*ambient_color))
+        
+        # Update directional light  
+        if hasattr(self, 'directional_light'):
+            self.directional_light.node().setColor(Vec4(*directional_color))
+            self.directional_light.setHpr(Vec3(*directional_direction))
+        
+        print(f"  ✓ Applied lighting: ambient={ambient_color[:3]}, directional={directional_color[:3]}")
     
     def update_editor(self, task):
         """Main editor update loop."""

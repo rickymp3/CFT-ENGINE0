@@ -1,0 +1,21 @@
+{
+  "name": "generated_material",
+  "type": "pbr_material",
+  "shader": "pbr",
+  "textures": {
+    "albedo": "/tmp/texture_gen/d231ea7ed1116b354503d7b4cfc9f8b9/albedo.png",
+    "normal": "/tmp/texture_gen/d231ea7ed1116b354503d7b4cfc9f8b9/normal.png",
+    "roughness": "/tmp/texture_gen/d231ea7ed1116b354503d7b4cfc9f8b9/roughness.png",
+    "metallic": "/tmp/texture_gen/d231ea7ed1116b354503d7b4cfc9f8b9/metallic.png"
+  },
+  "parameters": {
+    "metallic_factor": 0.5,
+    "roughness_factor": 0.5,
+    "ambient_occlusion_strength": 1.0
+  },
+  "metadata": {
+    "generated_from": "seamless stone texture",
+    "realism_score": 0.8,
+    "generation_timestamp": "2025-12-06T05:05:51.851512"
+  }
+}

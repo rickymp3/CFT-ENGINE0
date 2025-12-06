@@ -72,6 +72,8 @@ class StoryBeat:
     duration: float = 5.0  # Estimated duration in seconds
     animation_cues: List[str] = field(default_factory=list)
     visual_settings: Dict[str, Any] = field(default_factory=dict)
+    image_reference: Optional[str] = None  # Path or ID to reference image
+    generated_assets: List[str] = field(default_factory=list)  # IDs of generated assets
     
     def to_dict(self) -> Dict:
         return {
@@ -83,7 +85,9 @@ class StoryBeat:
             'dialogue': self.dialogue,
             'duration': self.duration,
             'animation_cues': self.animation_cues,
-            'visual_settings': self.visual_settings
+            'visual_settings': self.visual_settings,
+            'image_reference': self.image_reference,
+            'generated_assets': self.generated_assets
         }
 
 
@@ -206,6 +210,52 @@ class StoryGraph:
     def set_end_beats(self, beat_ids: List[str]) -> None:
         """Set ending beats."""
         self.end_beats = beat_ids
+    
+    def attach_image(self, beat_id: str, image_id: str) -> bool:
+        """Attach an image reference to a beat.
+        
+        Args:
+            beat_id: Beat ID
+            image_id: Image asset ID or path
+            
+        Returns:
+            True if successful
+        """
+        if beat_id in self.beats:
+            self.beats[beat_id].image_reference = image_id
+            logger.debug(f"Attached image {image_id} to beat {beat_id}")
+            return True
+        return False
+    
+    def get_image(self, beat_id: str) -> Optional[str]:
+        """Get image reference for a beat.
+        
+        Args:
+            beat_id: Beat ID
+            
+        Returns:
+            Image ID/path or None
+        """
+        if beat_id in self.beats:
+            return self.beats[beat_id].image_reference
+        return None
+    
+    def attach_generated_asset(self, beat_id: str, asset_id: str) -> bool:
+        """Attach a generated asset to a beat.
+        
+        Args:
+            beat_id: Beat ID
+            asset_id: Generated asset ID
+            
+        Returns:
+            True if successful
+        """
+        if beat_id in self.beats:
+            if asset_id not in self.beats[beat_id].generated_assets:
+                self.beats[beat_id].generated_assets.append(asset_id)
+            logger.debug(f"Attached asset {asset_id} to beat {beat_id}")
+            return True
+        return False
     
     def to_dict(self) -> Dict:
         """Convert to dictionary for serialization."""

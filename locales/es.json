@@ -12,7 +12,9 @@
       "apply": "Aplicar",
       "save": "Guardar",
       "load": "Cargar",
-      "delete": "Eliminar"
+      "delete": "Eliminar",
+      "generate": "Generar",
+      "browse": "Examinar"
     },
     "labels": {
       "name": "Nombre",
@@ -33,6 +35,156 @@
       "saved": "Escena guardada exitosamente",
       "loaded": "Escena cargada exitosamente",
       "error": "Ocurrió un error: {error}"
+    }
+  },
+  "textures": {
+    "title": "Generador de Texturas",
+    "dialog": {
+      "title": "Generar Texturas PBR",
+      "description": "Crea conjuntos de texturas PBR sin costuras a partir de descripciones de texto o imágenes de referencia."
+    },
+    "fields": {
+      "prompt": "Descripción de Texto",
+      "prompt_placeholder": "Describe la textura que deseas (ej: 'pared de piedra sin costuras, envejecida, cubierta de musgo')",
+      "reference_image": "Imagen de Referencia (Opcional)",
+      "reference_description": "Descripción adicional de la imagen de referencia",
+      "resolution": "Resolución",
+      "map_types": "Mapas de Textura",
+      "batch_size": "Número de Variaciones",
+      "style_image": "Imagen de Referencia de Estilo",
+      "language": "Idioma de la Descripción",
+      "realism_threshold": "Umbral de Calidad",
+      "material_name": "Nombre del Material"
+    },
+    "map_types": {
+      "albedo": "Albedo (Color Base)",
+      "normal": "Mapa Normal",
+      "roughness": "Rugosidad",
+      "metallic": "Metálico",
+      "height": "Mapa de Altura",
+      "ambient_occlusion": "Oclusión Ambiental",
+      "emission": "Emisión"
+    },
+    "resolutions": {
+      "512": "512x512 (Rápido)",
+      "1K": "1024x1024",
+      "2K": "2048x2048 (Recomendado)",
+      "4K": "4096x4096 (Alta Calidad)",
+      "8K": "8192x8192 (Calidad Ultra)"
+    },
+    "modes": {
+      "from_prompt": "Generar desde Texto",
+      "from_image": "Generar desde Imagen",
+      "style_transfer": "Transferencia de Estilo",
+      "batch_generate": "Generación por Lotes"
+    },
+    "progress": {
+      "initializing": "Inicializando generador de texturas...",
+      "generating": "Generando mapas de textura...",
+      "evaluating": "Evaluando calidad...",
+      "retrying": "Calidad por debajo del umbral, reintentando con descripción mejorada...",
+      "importing": "Importando a la biblioteca de recursos...",
+      "complete": "¡Generación de texturas completada!",
+      "cancelled": "Generación cancelada por el usuario.",
+      "failed": "La generación de texturas falló."
+    },
+    "status": {
+      "attempt": "Intento {current}/{max}",
+      "quality_score": "Puntuación de Calidad: {score:.2f}/1.00",
+      "threshold_met": "¡Umbral de calidad alcanzado!",
+      "threshold_not_met": "Calidad por debajo del umbral ({score:.2f} < {threshold:.2f})",
+      "api_unavailable": "API no disponible, usando generación procedural.",
+      "offline_mode": "Ejecutándose en modo sin conexión (generación procedural)."
+    },
+    "messages": {
+      "success": "¡Texturas generadas exitosamente!",
+      "success_imported": "Texturas generadas e importadas a la biblioteca de recursos.",
+      "error_prompt_empty": "Por favor ingresa una descripción o selecciona una imagen de referencia.",
+      "error_image_not_found": "Archivo de imagen de referencia no encontrado.",
+      "error_generation_failed": "La generación de texturas falló. Por favor intenta de nuevo.",
+      "error_quality_failed": "No se pudo alcanzar el umbral de calidad después de {max_retries} intentos.",
+      "warning_api_missing": "Clave API no configurada. Usando generación procedural.",
+      "info_batch_complete": "Se generaron {count} variaciones de textura."
+    },
+    "settings": {
+      "quality_threshold_tooltip": "Puntuación de calidad mínima (0.0-1.0). Valores más altos aplican estándares más estrictos.",
+      "batch_size_tooltip": "Genera múltiples variaciones de textura con modificaciones ligeras en la descripción.",
+      "seamless_tooltip": "Asegura que las texturas sean sin costuras y puedan tiling.",
+      "use_ml_evaluation_tooltip": "Usa evaluación de calidad basada en ML (requiere PyTorch). El modo heurístico es más rápido."
+    }
+  },
+  "music": {
+    "title": "Generador de Música",
+    "dialog": {
+      "title": "Generar Pistas de Música en Bucle",
+      "description": "Crea bucles de música sin costuras a partir de descripciones de texto o audio de referencia."
+    },
+    "fields": {
+      "prompt": "Descripción Musical",
+      "prompt_placeholder": "Describe la música que deseas (ej: 'música electrónica energética, 120 BPM, dinámica')",
+      "reference_audio": "Audio de Referencia (Opcional)",
+      "reference_description": "Descripción adicional del audio de referencia",
+      "duration": "Duración del Bucle",
+      "count": "Número de Bucles",
+      "mood": "Mood/Género",
+      "language": "Idioma de la Descripción",
+      "seamless_threshold": "Umbral de Continuidad"
+    },
+    "durations": {
+      "15": "15 segundos (Corto)",
+      "30": "30 segundos (Estándar)",
+      "60": "60 segundos (Extendido)"
+    },
+    "moods": {
+      "ambient": "Ambiental",
+      "electronic": "Electrónico",
+      "orchestral": "Orquestal",
+      "jazz": "Jazz",
+      "rock": "Rock",
+      "indie": "Indie",
+      "lo-fi": "Lo-Fi",
+      "synthwave": "Synthwave",
+      "epic": "Épico",
+      "relaxing": "Relajante"
+    },
+    "modes": {
+      "from_prompt": "Generar desde Texto",
+      "from_audio": "Generar desde Audio de Referencia",
+      "batch_generate": "Generación por Lotes"
+    },
+    "progress": {
+      "initializing": "Inicializando generador de música...",
+      "generating": "Generando bucles de música...",
+      "analyzing": "Analizando continuidad del bucle...",
+      "retrying": "Continuidad por debajo del umbral, reintentando...",
+      "importing": "Importando a la biblioteca de recursos...",
+      "complete": "¡Generación de música completada!",
+      "cancelled": "Generación cancelada por el usuario.",
+      "failed": "La generación de música falló."
+    },
+    "status": {
+      "attempt": "Intento {current}/{max}",
+      "quality_score": "Puntuación de Continuidad: {score:.2f}/1.00",
+      "threshold_met": "¡Umbral de continuidad alcanzado!",
+      "threshold_not_met": "Continuidad por debajo del umbral ({score:.2f} < {threshold:.2f})",
+      "api_unavailable": "API no disponible, usando generación procedural.",
+      "offline_mode": "Ejecutándose en modo sin conexión (generación procedural)."
+    },
+    "messages": {
+      "success": "¡Bucles de música generados exitosamente!",
+      "success_imported": "Bucles de música generados e importados a la biblioteca de recursos.",
+      "error_prompt_empty": "Por favor ingresa una descripción musical o selecciona audio de referencia.",
+      "error_audio_not_found": "Archivo de audio de referencia no encontrado.",
+      "error_generation_failed": "La generación de música falló. Por favor intenta de nuevo.",
+      "error_seamlessness_failed": "No se pudo alcanzar el umbral de continuidad después de {max_retries} intentos.",
+      "warning_api_missing": "Clave API no configurada. Usando generación procedural.",
+      "info_batch_complete": "Se generaron {count} variaciones de bucle musical."
+    },
+    "settings": {
+      "duration_tooltip": "Selecciona la duración para cada bucle generado.",
+      "count_tooltip": "Genera múltiples variaciones de bucle con estilos diferentes.",
+      "seamless_threshold_tooltip": "Puntuación de continuidad mínima (0.0-1.0). Valores más altos aseguran mejor repetibilidad.",
+      "mood_tooltip": "Especifica el mood o género para guiar la generación."
     }
   },
   "game": {
