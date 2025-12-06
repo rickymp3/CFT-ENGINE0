@@ -16,6 +16,7 @@ import numpy as np
 
 class TestRunner:
     """Automated test execution"""
+    __test__ = False  # Prevent pytest from collecting this helper class
     
     def __init__(self, test_dir: Path = Path("tests")):
         self.test_dir = test_dir

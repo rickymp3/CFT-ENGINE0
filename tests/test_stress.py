@@ -17,6 +17,7 @@ loadPrcFileData("", "audio-library-name null")
 
 class TestBase(ShowBase):
     """Test base application"""
+    __test__ = False  # Prevent pytest from collecting this fixture helper
     
     def __init__(self):
         ShowBase.__init__(self)
