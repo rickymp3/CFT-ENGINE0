@@ -136,6 +136,63 @@ def launch_editor() -> None:
         sys.exit(1)
 
 
+def generate_story(prompt: str, output: str = None, genre: str = "fantasy", 
+                  tone: str = "dramatic", branches: int = 3) -> None:
+    """Generate a story from a prompt.
+    
+    Args:
+        prompt: Story prompt
+        output: Output file path (optional)
+        genre: Story genre
+        tone: Story tone
+        branches: Number of branching decision points
+    """
+    print(f"\nGenerating story from prompt: '{prompt}'")
+    print(f"Genre: {genre} | Tone: {tone} | Branches: {branches}")
+    print("-" * 60)
+    
+    try:
+        from engine_modules.story_generator import generate_story_from_llm
+        
+        constraints = {
+            'genre': genre,
+            'tone': tone,
+            'branches': branches,
+            'beats': max(5, branches * 2)
+        }
+        
+        story = generate_story_from_llm(prompt, constraints)
+        
+        # Display summary
+        print("\nGenerated Story Summary:")
+        print("-" * 60)
+        print(story.get_story_summary())
+        
+        # Save if output specified
+        if output:
+            story.save_to_file(output)
+            print(f"\nStory saved to: {output}")
+        else:
+            # Save with default name
+            default_output = f"story_{story.title.replace(' ', '_').lower()}.json"
+            story.save_to_file(default_output)
+            print(f"\nStory saved to: {default_output}")
+        
+        # Show asset requirements
+        from engine_modules.story_integration import StoryToAssets
+        reqs = StoryToAssets.extract_asset_requirements(story)
+        print("\nAsset Requirements:")
+        for asset_type, assets in reqs.items():
+            if assets:
+                print(f"  {asset_type}: {', '.join(assets)}")
+        
+    except Exception as e:
+        print(f"Error generating story: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
+
+
 def main() -> None:
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -166,6 +223,21 @@ def main() -> None:
     config_parser.add_argument('--show', action='store_true',
                               help='Show current configuration')
     
+    # story command
+    story_parser = subparsers.add_parser('story', help='Generate a story')
+    story_parser.add_argument('--prompt', required=True,
+                             help='Story prompt')
+    story_parser.add_argument('--output', '-o', 
+                             help='Output file path (optional)')
+    story_parser.add_argument('--genre', default='fantasy',
+                             choices=['fantasy', 'scifi', 'mystery', 'romance', 'horror', 'general'],
+                             help='Story genre')
+    story_parser.add_argument('--tone', default='dramatic',
+                             choices=['dramatic', 'comedic', 'dark', 'epic', 'neutral'],
+                             help='Story tone')
+    story_parser.add_argument('--branches', type=int, default=3,
+                             help='Number of decision branches')
+    
     args = parser.parse_args()
     
     if args.command == 'new-project':
@@ -181,6 +253,8 @@ def main() -> None:
             show_config()
         else:
             print("Use --show to display configuration")
+    elif args.command == 'story':
+        generate_story(args.prompt, args.output, args.genre, args.tone, args.branches)
     else:
         parser.print_help()
 

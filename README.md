@@ -17,6 +17,7 @@ A complete, production-ready game engine built with Python featuring cutting-edg
 
 - **[User Guide](USER_GUIDE.md)** - Complete feature documentation
 - **[AAA Systems Guide](AAA_SYSTEMS_COMPLETE_GUIDE.md)** - System architecture  
+- **[Story Generator Guide](STORY_GENERATOR_GUIDE.md)** - Narrative generation & branching stories
 - **[QA & Production](QA_PRODUCTION_READY.md)** - Testing, profiling, benchmarks
 - **[Contributing](CONTRIBUTING.md)** - How to contribute
 - **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community guidelines
@@ -108,6 +109,32 @@ audio.play("thunder", loop=False)
 - **Asset Cache**: MD5 checksumming, metadata tracking, dependency management
 - **Search & Tagging**: Query assets by name, type, tags
 - **Thumbnail Generation**: Preview images for models and textures
+
+### Narrative Generation 📖
+- **Story Graph Generator**: Auto-generate branching narratives from text prompts
+- **LLM Integration**: OpenAI API support for dynamic story creation
+- **Branching Logic**: Full DAG support with multiple endings and player choices
+- **Animation Integration**: Automatic animation cue generation per narrative beat
+- **Asset Linkage**: Automatic asset requirement detection and import
+- **Interactive Playback**: Choice-driven story progression with progress tracking
+- **Serialization**: JSON-based story persistence and loading
+
+**Quick Start:**
+```bash
+# Generate a story from prompt
+python manage.py story \
+  --prompt "A hero's journey through enchanted lands" \
+  --genre fantasy \
+  --tone epic \
+  --branches 4
+
+# Or in code:
+from engine_modules.story_generator import StoryGraph, BeatType
+story = StoryGraph("My Story")
+beat1 = story.add_beat(BeatType.EXPOSITION, "Setup", "The beginning")
+```
+
+**See:** [Story Generator Guide](STORY_GENERATOR_GUIDE.md)
 
 ### Visual Scripting 🧩
 - **Node-Based Editor**: Drag-and-drop visual programming
