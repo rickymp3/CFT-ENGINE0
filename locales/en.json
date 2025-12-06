@@ -12,7 +12,9 @@
       "apply": "Apply",
       "save": "Save",
       "load": "Load",
-      "delete": "Delete"
+      "delete": "Delete",
+      "generate": "Generate",
+      "browse": "Browse"
     },
     "labels": {
       "name": "Name",
@@ -33,6 +35,156 @@
       "saved": "Scene saved successfully",
       "loaded": "Scene loaded successfully",
       "error": "An error occurred: {error}"
+    }
+  },
+  "textures": {
+    "title": "Texture Generator",
+    "dialog": {
+      "title": "Generate PBR Textures",
+      "description": "Create seamless PBR texture sets from text prompts or reference images."
+    },
+    "fields": {
+      "prompt": "Text Prompt",
+      "prompt_placeholder": "Describe the texture you want (e.g., 'seamless stone wall, weathered, moss covered')",
+      "reference_image": "Reference Image (Optional)",
+      "reference_description": "Additional description of reference image",
+      "resolution": "Resolution",
+      "map_types": "Texture Maps",
+      "batch_size": "Number of Variations",
+      "style_image": "Style Reference Image (for style transfer)",
+      "language": "Prompt Language",
+      "realism_threshold": "Quality Threshold",
+      "material_name": "Material Name"
+    },
+    "map_types": {
+      "albedo": "Albedo (Base Color)",
+      "normal": "Normal Map",
+      "roughness": "Roughness",
+      "metallic": "Metallic",
+      "height": "Height Map",
+      "ambient_occlusion": "Ambient Occlusion",
+      "emission": "Emission"
+    },
+    "resolutions": {
+      "512": "512x512 (Fast)",
+      "1K": "1024x1024",
+      "2K": "2048x2048 (Recommended)",
+      "4K": "4096x4096 (High Quality)",
+      "8K": "8192x8192 (Ultra Quality)"
+    },
+    "modes": {
+      "from_prompt": "Generate from Text",
+      "from_image": "Generate from Image",
+      "style_transfer": "Style Transfer",
+      "batch_generate": "Batch Generation"
+    },
+    "progress": {
+      "initializing": "Initializing texture generator...",
+      "generating": "Generating texture maps...",
+      "evaluating": "Evaluating quality...",
+      "retrying": "Quality below threshold, retrying with enhanced prompt...",
+      "importing": "Importing to asset pipeline...",
+      "complete": "Texture generation complete!",
+      "cancelled": "Generation cancelled by user.",
+      "failed": "Texture generation failed."
+    },
+    "status": {
+      "attempt": "Attempt {current}/{max}",
+      "quality_score": "Quality Score: {score:.2f}/1.00",
+      "threshold_met": "Quality threshold met!",
+      "threshold_not_met": "Quality below threshold ({score:.2f} < {threshold:.2f})",
+      "api_unavailable": "API unavailable, using procedural fallback.",
+      "offline_mode": "Running in offline mode (procedural generation)."
+    },
+    "messages": {
+      "success": "Textures generated successfully!",
+      "success_imported": "Textures generated and imported to asset library.",
+      "error_prompt_empty": "Please enter a text prompt or select a reference image.",
+      "error_image_not_found": "Reference image file not found.",
+      "error_generation_failed": "Texture generation failed. Please try again.",
+      "error_quality_failed": "Could not achieve quality threshold after {max_retries} attempts.",
+      "warning_api_missing": "API key not configured. Using procedural fallback.",
+      "info_batch_complete": "Generated {count} texture variations."
+    },
+    "settings": {
+      "quality_threshold_tooltip": "Minimum quality score (0.0-1.0). Higher values enforce stricter quality standards.",
+      "batch_size_tooltip": "Generate multiple texture variations with slight prompt modifications.",
+      "seamless_tooltip": "Ensure textures are seamless and tileable.",
+      "use_ml_evaluation_tooltip": "Use ML-based quality evaluation (requires PyTorch). Heuristic mode is faster."
+    }
+  },
+  "music": {
+    "title": "Music Generator",
+    "dialog": {
+      "title": "Generate Loopable Music Tracks",
+      "description": "Create seamless music loops from text prompts or reference audio."
+    },
+    "fields": {
+      "prompt": "Music Description",
+      "prompt_placeholder": "Describe the music you want (e.g., 'upbeat electronic dance, 120 BPM, energetic')",
+      "reference_audio": "Reference Audio (Optional)",
+      "reference_description": "Additional description of reference audio",
+      "duration": "Loop Duration",
+      "count": "Number of Loops",
+      "mood": "Mood/Genre",
+      "language": "Prompt Language",
+      "seamless_threshold": "Seamlessness Threshold"
+    },
+    "durations": {
+      "15": "15 seconds (Short)",
+      "30": "30 seconds (Standard)",
+      "60": "60 seconds (Extended)"
+    },
+    "moods": {
+      "ambient": "Ambient",
+      "electronic": "Electronic",
+      "orchestral": "Orchestral",
+      "jazz": "Jazz",
+      "rock": "Rock",
+      "indie": "Indie",
+      "lo-fi": "Lo-Fi",
+      "synthwave": "Synthwave",
+      "epic": "Epic",
+      "relaxing": "Relaxing"
+    },
+    "modes": {
+      "from_prompt": "Generate from Text",
+      "from_audio": "Generate from Reference Audio",
+      "batch_generate": "Batch Generation"
+    },
+    "progress": {
+      "initializing": "Initializing music generator...",
+      "generating": "Generating music loops...",
+      "analyzing": "Analyzing loop seamlessness...",
+      "retrying": "Seamlessness below threshold, retrying...",
+      "importing": "Importing to asset library...",
+      "complete": "Music generation complete!",
+      "cancelled": "Generation cancelled by user.",
+      "failed": "Music generation failed."
+    },
+    "status": {
+      "attempt": "Attempt {current}/{max}",
+      "quality_score": "Seamlessness Score: {score:.2f}/1.00",
+      "threshold_met": "Seamlessness threshold met!",
+      "threshold_not_met": "Seamlessness below threshold ({score:.2f} < {threshold:.2f})",
+      "api_unavailable": "API unavailable, using procedural fallback.",
+      "offline_mode": "Running in offline mode (procedural generation)."
+    },
+    "messages": {
+      "success": "Music loops generated successfully!",
+      "success_imported": "Music loops generated and imported to asset library.",
+      "error_prompt_empty": "Please enter a music description or select reference audio.",
+      "error_audio_not_found": "Reference audio file not found.",
+      "error_generation_failed": "Music generation failed. Please try again.",
+      "error_seamlessness_failed": "Could not achieve seamlessness threshold after {max_retries} attempts.",
+      "warning_api_missing": "API key not configured. Using procedural fallback.",
+      "info_batch_complete": "Generated {count} music loop variations."
+    },
+    "settings": {
+      "duration_tooltip": "Select the duration for each generated loop.",
+      "count_tooltip": "Generate multiple loop variations with different styles.",
+      "seamless_threshold_tooltip": "Minimum seamlessness score (0.0-1.0). Higher values ensure better loopability.",
+      "mood_tooltip": "Specify the mood or genre to guide generation."
     }
   },
   "game": {

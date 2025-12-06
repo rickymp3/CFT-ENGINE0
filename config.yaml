@@ -63,6 +63,101 @@ assets:
   fonts_path: "assets/fonts"
   shaders_path: "assets/shaders"
 
+# Texture Generation Settings
+texture_generation:
+  enabled: true
+  # API Configuration
+  api:
+    provider: "hyper3d"                    # Options: hyper3d, scenario, stable_diffusion
+    endpoint: "https://api.hyper3d.ai/v1"  # Can be overridden by HYPER3D_ENDPOINT env var
+    key: ""                                 # Can be overridden by HYPER3D_API_KEY env var
+    timeout: 300                            # API timeout in seconds
+  
+  # Quality Control
+  quality:
+    realism_threshold: 0.7                  # Minimum quality score (0.0-1.0)
+    max_retries: 3                          # Max attempts to achieve threshold
+    use_ml_evaluation: false                # Use ML-based quality evaluation (requires torch)
+  
+  # Generation Defaults
+  generation:
+    default_resolution: "2K"                # Options: 512, 1K, 2K, 4K, 8K
+    default_map_types:                      # Default maps to generate
+      - albedo
+      - normal
+      - roughness
+      - metallic
+    default_batch_size: 1                   # Number of variations in batch mode
+  
+  # Offline/Fallback Mode
+  fallback:
+    use_procedural: true                    # Use procedural generation when API unavailable
+    procedural_seed: 42                     # Base seed for reproducible procedural textures
+    seamless: true                          # Generate seamless/tileable textures
+  
+  # Output Configuration
+  output:
+    directory: "generated_textures"         # Directory for generated textures
+    auto_import: true                       # Auto-import to asset pipeline
+    create_material_json: true              # Auto-create material files
+  
+  # Localization
+  localization:
+    detect_ui_language: true                # Auto-detect language from UI
+    supported_languages:                    # Languages supported by AI service
+      - en
+      - es
+      - fr
+      - de
+      - ja
+      - zh
+      - ru
+
+# Music Generation Settings
+music_generation:
+  enabled: true
+  # API Configuration
+  api:
+    provider: "soundverse"                  # Options: soundverse, other_provider
+    endpoint: "https://api.soundverse.ai/v1" # Can be overridden by SOUNDVERSE_ENDPOINT env var
+    key: ""                                 # Can be overridden by SOUNDVERSE_API_KEY env var
+    timeout: 300                            # API timeout in seconds
+  
+  # Quality Control
+  quality:
+    seamless_threshold: 0.6                 # Minimum seamlessness score (0.0-1.0)
+    max_retries: 3                          # Max attempts to achieve threshold
+  
+  # Generation Defaults
+  generation:
+    default_duration: 30                    # Options: 15, 30, 60 seconds
+    default_count: 5                        # Number of loop variations
+    default_mood: "ambient"                 # Default mood/genre
+  
+  # Offline/Fallback Mode
+  fallback:
+    use_procedural: true                    # Use procedural generation when API unavailable
+    procedural_seed: 42                     # Base seed for reproducible loops
+    sample_library_dir: "assets/sounds"     # Directory containing sample loops
+  
+  # Output Configuration
+  output:
+    directory: "generated_music"            # Directory for generated loops
+    auto_import: true                       # Auto-import to asset pipeline
+    auto_creative_mode: false               # Auto-generate when no prompt given
+  
+  # Localization
+  localization:
+    detect_ui_language: true                # Auto-detect language from UI
+    supported_languages:                    # Languages supported by AI service
+      - en
+      - es
+      - fr
+      - de
+      - ja
+      - zh
+      - ru
+
 # Controls (Keyboard Mappings)
 controls:
   quit: "escape"

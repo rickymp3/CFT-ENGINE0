@@ -193,6 +193,167 @@ def generate_story(prompt: str, output: str = None, genre: str = "fantasy",
         sys.exit(1)
 
 
+def generate_texture(prompt: str = None, image_path: str = None,
+                    description: str = None, resolution: str = "2K",
+                    maps: list = None, batch_size: int = 1,
+                    language: str = "en", threshold: float = 0.7,
+                    max_retries: int = 3, output_dir: str = None,
+                    material_name: str = None, enforce_quality: bool = True,
+                    style_image: str = None) -> None:
+    """Generate PBR textures from text or image.
+    
+    Args:
+        prompt: Text description of texture
+        image_path: Reference image path
+        description: Additional description for reference image
+        resolution: Output resolution
+        maps: List of map types to generate
+        batch_size: Number of variations
+        language: Prompt language
+        threshold: Quality threshold
+        max_retries: Max generation attempts
+        output_dir: Output directory
+        material_name: Name for material
+        enforce_quality: Whether to enforce quality threshold
+        style_image: Style transfer reference image
+    """
+    try:
+        from engine_modules.texture_generator import TextureGenerator
+    except ImportError:
+        print("Error: Could not import TextureGenerator")
+        return
+    
+    # Validate inputs
+    if not prompt and not image_path:
+        print("Error: Please provide either --prompt or --image")
+        return
+    
+    if image_path and not Path(image_path).exists():
+        print(f"Error: Reference image not found: {image_path}")
+        return
+    
+    if style_image and not Path(style_image).exists():
+        print(f"Error: Style image not found: {style_image}")
+        return
+    
+    # Setup configuration
+    config = {
+        "realism_threshold": threshold,
+        "max_retries": max_retries,
+        "output_dir": output_dir or "generated_textures"
+    }
+    
+    print("🎨 Texture Generator CLI")
+    print(f"Resolution: {resolution}")
+    print(f"Quality Threshold: {threshold:.2f}")
+    print(f"Max Retries: {max_retries}")
+    
+    # Initialize generator
+    generator = TextureGenerator(config)
+    
+    # Progress callback
+    def on_progress(stage, pct, message):
+        bar_length = 30
+        filled = int(bar_length * pct / 100)
+        bar = "█" * filled + "░" * (bar_length - filled)
+        print(f"[{bar}] {pct:3.0f}% {stage}: {message}")
+    
+    generator.set_progress_callback(on_progress)
+    
+    # Generate textures
+    if batch_size > 1:
+        print(f"\nGenerating {batch_size} texture variations...")
+        results = generator.generate_batch(
+            prompt=prompt,
+            batch_size=batch_size,
+            resolution=resolution,
+            map_types=maps or ["albedo", "normal", "roughness", "metallic"],
+            language=language,
+            enforce_quality=enforce_quality
+        )
+        
+        if results:
+            print(f"✅ Successfully generated {len(results)}/{batch_size} textures")
+            for i, texture_set in enumerate(results, 1):
+                print(f"  {i}. Realism Score: {texture_set.realism_score:.2f}")
+                material_json = generator.create_material_json(
+                    material_name or f"{material_name}_variation_{i}",
+                    texture_set
+                )
+                if material_json:
+                    print(f"     Material: {material_json}")
+        else:
+            print("❌ Failed to generate texture variations")
+        
+    elif style_image:
+        print(f"\nGenerating texture with style transfer...")
+        texture_set = generator.generate_stylized(
+            content_prompt=prompt,
+            style_image_path=style_image,
+            resolution=resolution,
+            map_types=maps or ["albedo", "normal", "roughness", "metallic"],
+            language=language,
+            enforce_quality=enforce_quality
+        )
+        
+        if texture_set:
+            print(f"✅ Texture generated successfully!")
+            print(f"   Realism Score: {texture_set.realism_score:.2f}")
+            material_json = generator.create_material_json(
+                material_name or "generated_material",
+                texture_set
+            )
+            if material_json:
+                print(f"   Material: {material_json}")
+        else:
+            print("❌ Texture generation failed")
+    
+    elif image_path:
+        print(f"\nGenerating texture from reference image...")
+        texture_set = generator.generate_from_image(
+            image_path=image_path,
+            description=description or "generate texture from reference image",
+            resolution=resolution,
+            map_types=maps or ["albedo", "normal", "roughness", "metallic"],
+            language=language,
+            enforce_quality=enforce_quality
+        )
+        
+        if texture_set:
+            print(f"✅ Texture generated successfully!")
+            print(f"   Realism Score: {texture_set.realism_score:.2f}")
+            material_json = generator.create_material_json(
+                material_name or "generated_material",
+                texture_set
+            )
+            if material_json:
+                print(f"   Material: {material_json}")
+        else:
+            print("❌ Texture generation failed")
+    
+    else:
+        print(f"\nGenerating texture from prompt...")
+        texture_set = generator.generate_from_prompt(
+            prompt=prompt,
+            resolution=resolution,
+            map_types=maps or ["albedo", "normal", "roughness", "metallic"],
+            language=language,
+            enforce_quality=enforce_quality
+        )
+        
+        if texture_set:
+            print(f"✅ Texture generated successfully!")
+            print(f"   Realism Score: {texture_set.realism_score:.2f}")
+            material_json = generator.create_material_json(
+                material_name or "generated_material",
+                texture_set
+            )
+            if material_json:
+                print(f"   Material: {material_json}")
+        else:
+            print("❌ Texture generation failed")
+
+
 def main() -> None:
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -238,6 +399,38 @@ def main() -> None:
     story_parser.add_argument('--branches', type=int, default=3,
                              help='Number of decision branches')
     
+    # texture command
+    texture_parser = subparsers.add_parser('texture', help='Generate PBR textures')
+    texture_parser.add_argument('--prompt', 
+                               help='Texture description (text-to-texture)')
+    texture_parser.add_argument('--image',
+                               help='Reference image path (image-to-texture)')
+    texture_parser.add_argument('--description',
+                               help='Description for reference image')
+    texture_parser.add_argument('--resolution', default='2K',
+                               choices=['512', '1K', '2K', '4K', '8K'],
+                               help='Output resolution')
+    texture_parser.add_argument('--maps', nargs='+',
+                               default=['albedo', 'normal', 'roughness', 'metallic'],
+                               choices=['albedo', 'normal', 'roughness', 'metallic', 'height', 'ao', 'emission'],
+                               help='Maps to generate')
+    texture_parser.add_argument('--batch', type=int, default=1,
+                               help='Number of variations to generate')
+    texture_parser.add_argument('--language', default='en',
+                               help='Prompt language code')
+    texture_parser.add_argument('--threshold', type=float, default=0.7,
+                               help='Quality threshold (0.0-1.0)')
+    texture_parser.add_argument('--max-retries', type=int, default=3,
+                               help='Max generation attempts')
+    texture_parser.add_argument('--output', '-o',
+                               help='Output directory')
+    texture_parser.add_argument('--material-name',
+                               help='Name for generated material')
+    texture_parser.add_argument('--no-quality-check', action='store_true',
+                               help='Skip quality evaluation')
+    texture_parser.add_argument('--style',
+                               help='Style transfer reference image')
+    
     args = parser.parse_args()
     
     if args.command == 'new-project':
@@ -255,6 +448,22 @@ def main() -> None:
             print("Use --show to display configuration")
     elif args.command == 'story':
         generate_story(args.prompt, args.output, args.genre, args.tone, args.branches)
+    elif args.command == 'texture':
+        generate_texture(
+            prompt=args.prompt,
+            image_path=args.image,
+            description=args.description,
+            resolution=args.resolution,
+            maps=args.maps,
+            batch_size=args.batch,
+            language=args.language,
+            threshold=args.threshold,
+            max_retries=args.max_retries,
+            output_dir=args.output,
+            material_name=args.material_name,
+            enforce_quality=not args.no_quality_check,
+            style_image=args.style
+        )
     else:
         parser.print_help()
 

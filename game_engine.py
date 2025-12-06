@@ -1,4 +1,8 @@
 """Graphics engine for video game creation using pygame."""
+import os
+# If no DISPLAY environment variable is set, use the dummy SDL driver
+if os.environ.get("DISPLAY", "") == "":
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
 import pygame
 import sys
 from typing import Optional, Tuple

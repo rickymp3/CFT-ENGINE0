@@ -1,0 +1,110 @@
+{
+  "id": "18099d74-fae5-4a87-8feb-79942de17f67",
+  "title": "Generated Story: Test story",
+  "description": "Test story",
+  "genre": "fantasy",
+  "tone": "dramatic",
+  "beats": {
+    "b56911b1-0acb-4e15-a4d4-71a2ea005ae7": {
+      "id": "b56911b1-0acb-4e15-a4d4-71a2ea005ae7",
+      "beat_type": "exposition",
+      "title": "Setup",
+      "description": "Test story",
+      "characters": [
+        "4ea40b2d-29f8-4209-b19d-6f7003d9bc79"
+      ],
+      "dialogue": null,
+      "duration": 5.0,
+      "animation_cues": [],
+      "visual_settings": {},
+      "image_reference": null,
+      "generated_assets": []
+    },
+    "7c3fc97a-29a0-4446-b58f-287d59bf97c3": {
+      "id": "7c3fc97a-29a0-4446-b58f-287d59bf97c3",
+      "beat_type": "inciting_incident",
+      "title": "Conflict",
+      "description": "Something goes wrong",
+      "characters": [
+        "4ea40b2d-29f8-4209-b19d-6f7003d9bc79",
+        "d0141344-5737-4c91-a4d0-49e451f0e892"
+      ],
+      "dialogue": null,
+      "duration": 5.0,
+      "animation_cues": [],
+      "visual_settings": {},
+      "image_reference": null,
+      "generated_assets": []
+    },
+    "7fcdc641-7f78-4cf5-b8bf-4eaf77092e81": {
+      "id": "7fcdc641-7f78-4cf5-b8bf-4eaf77092e81",
+      "beat_type": "climax",
+      "title": "Confrontation",
+      "description": "Final battle",
+      "characters": [
+        "4ea40b2d-29f8-4209-b19d-6f7003d9bc79",
+        "d0141344-5737-4c91-a4d0-49e451f0e892"
+      ],
+      "dialogue": null,
+      "duration": 5.0,
+      "animation_cues": [],
+      "visual_settings": {},
+      "image_reference": null,
+      "generated_assets": []
+    },
+    "b539b70c-54b5-4f08-895c-e4ecf8db5297": {
+      "id": "b539b70c-54b5-4f08-895c-e4ecf8db5297",
+      "beat_type": "resolution",
+      "title": "Ending",
+      "description": "Resolution",
+      "characters": [
+        "4ea40b2d-29f8-4209-b19d-6f7003d9bc79"
+      ],
+      "dialogue": null,
+      "duration": 5.0,
+      "animation_cues": [],
+      "visual_settings": {},
+      "image_reference": null,
+      "generated_assets": []
+    }
+  },
+  "characters": {
+    "4ea40b2d-29f8-4209-b19d-6f7003d9bc79": {
+      "id": "4ea40b2d-29f8-4209-b19d-6f7003d9bc79",
+      "name": "Hero",
+      "role": "protagonist",
+      "description": "Main character",
+      "animations": [],
+      "dialogue_style": "neutral"
+    },
+    "d0141344-5737-4c91-a4d0-49e451f0e892": {
+      "id": "d0141344-5737-4c91-a4d0-49e451f0e892",
+      "name": "Antagonist",
+      "role": "antagonist",
+      "description": "Opposition force",
+      "animations": [],
+      "dialogue_style": "neutral"
+    }
+  },
+  "edges": [
+    [
+      "b56911b1-0acb-4e15-a4d4-71a2ea005ae7",
+      "7c3fc97a-29a0-4446-b58f-287d59bf97c3"
+    ],
+    [
+      "7c3fc97a-29a0-4446-b58f-287d59bf97c3",
+      "7fcdc641-7f78-4cf5-b8bf-4eaf77092e81"
+    ],
+    [
+      "7fcdc641-7f78-4cf5-b8bf-4eaf77092e81",
+      "b539b70c-54b5-4f08-895c-e4ecf8db5297"
+    ]
+  ],
+  "choices": {},
+  "start_beats": [
+    "b56911b1-0acb-4e15-a4d4-71a2ea005ae7"
+  ],
+  "end_beats": [
+    "b539b70c-54b5-4f08-895c-e4ecf8db5297"
+  ]
+}
