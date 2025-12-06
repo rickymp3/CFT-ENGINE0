@@ -1,0 +1,11 @@
+{
+  "id": "pbr/concrete_brushed",
+  "description": "Brushed concrete with subtle bumps.",
+  "albedo": "../images/pbr/concrete_brushed_albedo.png",
+  "normal": "../images/pbr/concrete_brushed_normal.png",
+  "metallic": "../images/pbr/concrete_brushed_metallic.png",
+  "roughness": "../images/pbr/concrete_brushed_roughness.png",
+  "ao": "../images/pbr/concrete_brushed_ao.png",
+  "tiling": 1,
+  "color_space": "linear"
+}

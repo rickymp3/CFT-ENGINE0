@@ -1,0 +1,11 @@
+{
+  "id": "pbr/fabric_canvas",
+  "description": "Neutral fabric weave for upholstery and soft goods.",
+  "albedo": "../images/pbr/fabric_canvas_albedo.png",
+  "normal": "../images/pbr/fabric_canvas_normal.png",
+  "metallic": "../images/pbr/fabric_canvas_metallic.png",
+  "roughness": "../images/pbr/fabric_canvas_roughness.png",
+  "ao": "../images/pbr/fabric_canvas_ao.png",
+  "tiling": 1,
+  "color_space": "linear"
+}

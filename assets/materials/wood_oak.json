@@ -1,0 +1,11 @@
+{
+  "id": "pbr/wood_oak",
+  "description": "Warm oak planks with visible grain.",
+  "albedo": "../images/pbr/wood_oak_albedo.png",
+  "normal": "../images/pbr/wood_oak_normal.png",
+  "metallic": "../images/pbr/wood_oak_metallic.png",
+  "roughness": "../images/pbr/wood_oak_roughness.png",
+  "ao": "../images/pbr/wood_oak_ao.png",
+  "tiling": 1,
+  "color_space": "linear"
+}

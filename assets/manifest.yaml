@@ -15,6 +15,40 @@ assets:
       usage: ui
       license: internal
 
+  - id: ui/panel/dark
+    type: image
+    path: images/ui/panel_dark.png
+    tags: [ui, panel]
+    metadata:
+      usage: ui
+
+  - id: ui/button/primary
+    type: image
+    path: images/ui/button_primary.png
+    tags: [ui, button]
+    metadata:
+      usage: ui
+
+  - id: ui/icon/play
+    type: image
+    path: images/ui/icon_play.png
+    tags: [ui, icon]
+
+  - id: ui/icon/pause
+    type: image
+    path: images/ui/icon_pause.png
+    tags: [ui, icon]
+
+  - id: ui/icon/close
+    type: image
+    path: images/ui/icon_close.png
+    tags: [ui, icon]
+
+  - id: ui/icon/settings
+    type: image
+    path: images/ui/icon_settings.png
+    tags: [ui, icon]
+
   - id: pbr/metal_plate
     type: material
     path: materials/metal_plate.json
@@ -23,17 +57,69 @@ assets:
       tiling: 2
       color_space: linear
 
-  - id: fonts/primary
-    type: font
-    path: fonts/Inter-Regular.ttf
-    tags: [font, ui]
+  - id: pbr/wood_oak
+    type: material
+    path: materials/wood_oak.json
+    tags: [pbr, wood]
     metadata:
-      fallbacks:
-        - fonts/DejaVuSans.ttf
+      tiling: 1
+      color_space: linear
+
+  - id: pbr/concrete_brushed
+    type: material
+    path: materials/concrete_brushed.json
+    tags: [pbr, concrete]
+    metadata:
+      tiling: 1
+      color_space: linear
+
+  - id: pbr/fabric_canvas
+    type: material
+    path: materials/fabric_canvas.json
+    tags: [pbr, fabric]
+    metadata:
+      tiling: 1
+      color_space: linear
+
+  - id: pbr/emissive_grid
+    type: material
+    path: materials/emissive_grid.json
+    tags: [pbr, emissive]
+    metadata:
+      tiling: 1
+      color_space: linear
 
   - id: sfx/ui/click
     type: sound
     path: sounds/ui/click.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.6
+
+  - id: sfx/ui/hover
+    type: sound
+    path: sounds/ui/hover.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.5
+
+  - id: sfx/ui/confirm
+    type: sound
+    path: sounds/ui/confirm.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.65
+
+  - id: sfx/ui/error
+    type: sound
+    path: sounds/ui/error.wav
+    tags: [ui, sfx]
+    metadata:
+      volume: 0.6
+
+  - id: sfx/ui/swoosh
+    type: sound
+    path: sounds/ui/swoosh.wav
     tags: [ui, sfx]
     metadata:
       volume: 0.6
@@ -44,6 +130,33 @@ assets:
     tags: [ambience]
     metadata:
       looping: true
+
+  - id: ambience/rain_soft
+    type: sound
+    path: sounds/ambience/rain_soft.wav
+    tags: [ambience]
+    metadata:
+      looping: true
+
+  - id: ambience/city_hum
+    type: sound
+    path: sounds/ambience/city_hum.wav
+    tags: [ambience]
+    metadata:
+      looping: true
+
+  - id: skybox/clear_skies
+    type: image
+    path: images/skybox/clear_skies/clear_skies_px.png
+    tags: [skybox, environment]
+    metadata:
+      faces:
+        px: images/skybox/clear_skies/clear_skies_px.png
+        nx: images/skybox/clear_skies/clear_skies_nx.png
+        py: images/skybox/clear_skies/clear_skies_py.png
+        ny: images/skybox/clear_skies/clear_skies_ny.png
+        pz: images/skybox/clear_skies/clear_skies_pz.png
+        nz: images/skybox/clear_skies/clear_skies_nz.png
 
 schema:
   version: 1

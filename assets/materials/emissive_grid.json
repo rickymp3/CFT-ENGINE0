@@ -1,0 +1,12 @@
+{
+  "id": "pbr/emissive_grid",
+  "description": "Sci-fi emissive grid for holographic panels.",
+  "albedo": "../images/pbr/emissive_grid_albedo.png",
+  "normal": "../images/pbr/emissive_grid_normal.png",
+  "metallic": "../images/pbr/emissive_grid_metallic.png",
+  "roughness": "../images/pbr/emissive_grid_roughness.png",
+  "ao": "../images/pbr/emissive_grid_ao.png",
+  "emissive": "../images/pbr/emissive_grid_emissive.png",
+  "tiling": 1,
+  "color_space": "linear"
+}
